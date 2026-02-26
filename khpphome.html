@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KHPP - GPS Wiki</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* --- COLORS: Change these to give KHPP a unique look (e.g., maybe Blue instead of Red?) --- */
+            --primary-red: #ff4d4d;       
+            --bg-dark: #0f0f0f;           
+            --card-bg: #1a1a1a;           
+            --text-main: #ffffff;         
+            --text-dim: #a0a0a0;          
+            --border-color: #333333;      
+            --transition-speed: 0.4s;     
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* --- BACK BUTTON STYLE --- */
+        .back-nav {
+            padding: 20px 10%;
+            background: #050505;
+        }
+
+        .btn-back {
+            color: var(--primary-red);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: opacity 0.3s;
+        }
+
+        .btn-back:hover {
+            opacity: 0.7;
+        }
+
+        /* --- HERO SECTION (KHPP SPECIFIC) --- */
+        .hero {
+            position: relative;
+            padding: 60px 10%;
+            /* CHANGE URL: This should be a photo of the Klinton Plant */
+            background: linear-gradient(rgba(15,15,15,0.8), rgba(15,15,15,0.9)), 
+                        url('https://via.placeholder.com/1920x600?text=KHPP+Facility+View');
+            background-size: cover;
+            background-position: center;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin: 0;
+            color: var(--primary-red);
+            text-transform: uppercase;
+        }
+
+        /* --- GRID FOR KHPP GUIDES --- */
+        .main-container {
+            padding: 60px 10%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .wiki-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .wiki-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all var(--transition-speed) ease;
+            border: 1px solid var(--border-color);
+            text-decoration: none;
+            display: block;
+        }
+
+        .wiki-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-red);
+        }
+
+        .card-image {
+            height: 160px;
+            background-color: #222;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-info {
+            padding: 15px;
+        }
+
+        .card-info h4 {
+            margin: 0;
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="back-nav">
+        <a href="index.html" class="btn-back">← Back to Main Hub</a>
+    </nav>
+
+    <header class="hero">
+        <h1>Klinton Hydroelectric</h1>
+        <p>Official Operating Procedures and Documentation</p>
+    </header>
+
+    <main class="main-container">
+        
+        <h2 style="margin-bottom: 30px; font-size: 1rem; color: var(--text-dim); text-transform: uppercase;">Plant Documentation</h2>
+
+        <section class="wiki-grid">
+            
+            <a href="#" class="wiki-card">
+                <div class="card-image" style="background-image: url('https://via.placeholder.com/400x200?text=Startup+Protocol')"></div>
+                <div class="card-info">
+                    <h4>Startup Protocols</h4>
+                </div>
+            </a>
+
+            <a href="#" class="wiki-card">
+                <div class="card-image" style="background-image: url('https://via.placeholder.com/400x200?text=Emergency+Stop')"></div>
+                <div class="card-info">
+                    <h4>Emergency Procedures</h4>
+                </div>
+            </a>
+
+            <a href="#" class="wiki-card">
+                <div class="card-image" style="background-image: url('https://via.placeholder.com/400x200?text=Maintenance')"></div>
+                <div class="card-info">
+                    <h4>Turbine Maintenance</h4>
+                </div>
+            </a>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
