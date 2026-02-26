@@ -4,204 +4,280 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GPS Official Wiki</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+
     <style>
-        /* Global Styles */
+        :root {
+            /* --- COLOR PALETTE: CHANGE THESE TO CHANGE THE WHOLE SITE --- */
+            --primary-red: #ff4d4d;       /* Main accent color (Buttons, Titles) */
+            --bg-dark: #0f0f0f;           /* Deepest background color */
+            --card-bg: #1a1a1a;           /* Background color for the boxes/cards */
+            --text-main: #ffffff;         /* Main text color */
+            --text-dim: #a0a0a0;          /* Faded text for descriptions */
+            --border-color: #333333;      /* Subtle border lines */
+            --transition-speed: 0.4s;     /* How "smooth" the animations feel */
+        }
+
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
         }
 
-        /* Smooth Scrolling */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Hero Header Section */
+        /* --- HEADER SECTION --- */
         .hero {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-                        url('https://via.placeholder.com/1920x600/222/444?text=Control+Room+Background'); /* Replace with your image */
+            position: relative;
+            padding: 100px 10%;
+            /* Change the URL below to change your background image */
+            background: linear-gradient(rgba(15,15,15,0.85), rgba(15,15,15,0.95)), 
+                        url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
-            padding: 80px 10%;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            border-bottom: 4px solid #e74c3c;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
         }
 
-        .hero-text h1 {
-            font-size: 3rem;
-            color: #ff4d4d;
-            margin-bottom: 10px;
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem); /* Responsive font size */
+            margin: 0;
+            color: var(--primary-red);
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            font-weight: 700;
+        }
+
+        .hero-content p {
+            max-width: 600px;
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            margin-top: 10px;
+        }
+
+        /* --- FLOATING UPDATE BOX --- */
+        .update-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px); /* This creates the "Glass" effect */
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 77, 77, 0.2); /* Subtle red glow border */
+            width: 350px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .update-card h3 {
+            margin-top: 0;
+            color: var(--primary-red);
+            font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
 
-        .hero-text p {
-            max-width: 500px;
-            line-height: 1.6;
-            color: #ccc;
+        .update-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0 0 0;
         }
 
-        /* Update Box (The floating black box) */
-        .update-box {
-            background: rgba(30, 30, 30, 0.9);
-            padding: 20px;
-            border-radius: 4px;
-            border-left: 5px solid #e74c3c;
-            width: 300px;
+        .update-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             font-size: 0.9rem;
+            color: var(--text-dim);
         }
 
-        .update-box h3 {
-            margin-top: 0;
-            color: #ff4d4d;
+        /* --- MAIN CONTENT AREA --- */
+        .main-container {
+            padding: 60px 10%;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        /* Main Content */
-        .container {
-            padding: 40px 10%;
+        /* Search Bar Styling */
+        .search-box {
+            margin-bottom: 60px;
             text-align: center;
         }
 
-        /* Search Bar */
-        .search-container {
-            margin-bottom: 50px;
-        }
-
-        .search-container p {
-            color: #ff4d4d;
+        .search-label {
+            display: block;
+            color: var(--primary-red);
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
         }
 
-        input[type="text"] {
+        .search-box input {
             width: 100%;
-            max-width: 600px;
-            padding: 12px;
-            background: #1e1e1e;
-            border: 1px solid #333;
+            max-width: 700px;
+            padding: 18px 25px;
+            background: #151515;
+            border: 2px solid var(--border-color);
+            border-radius: 50px; /* Rounded pill shape for "smooth" look */
             color: white;
-            border-radius: 4px;
+            font-size: 1rem;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .search-box input:focus {
             outline: none;
-            transition: border 0.3s;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 20px rgba(255, 77, 77, 0.15);
+            transform: scale(1.02); /* Slight pop when typing */
         }
 
-        input[type="text"]:focus {
-            border-color: #ff4d4d;
-        }
-
-        /* Grid Layout */
-        .grid {
+        /* --- THE GRID & CARDS --- */
+        .wiki-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
         }
 
-        /* Card Component */
-        .card {
-            background: #1e1e1e;
-            border-radius: 8px;
+        .wiki-card {
+            background: var(--card-bg);
+            border-radius: 16px;
             overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
+            transition: all var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--border-color);
+            text-decoration: none;
+            display: block;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            border-bottom: 3px solid #ff4d4d;
+        /* Animation when you hover over a card */
+        .wiki-card:hover {
+            transform: translateY(-12px); /* Lifts card up */
+            border-color: var(--primary-red);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
         }
 
-        .card-img {
-            height: 180px;
-            background: #333;
+        .card-image {
+            height: 200px;
+            background-color: #222;
             background-size: cover;
             background-position: center;
+            transition: transform var(--transition-speed) ease;
         }
 
-        .card-title {
-            padding: 15px;
-            font-weight: bold;
-            color: #ff4d4d;
-            text-transform: uppercase;
-            font-size: 0.9rem;
+        /* Zoom effect on image when hovering card */
+        .wiki-card:hover .card-image {
+            transform: scale(1.1);
         }
 
-        .disabled {
-            opacity: 0.6;
+        .card-info {
+            padding: 20px;
+            background: var(--card-bg);
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-info h4 {
+            margin: 0;
+            color: var(--text-main);
+            font-size: 1.1rem;
+        }
+
+        /* Greyed out style for disabled pages */
+        .is-disabled {
+            opacity: 0.4;
             filter: grayscale(1);
+            cursor: not-allowed;
+            pointer-events: none;
         }
 
-        /* Footer Buttons */
-        .footer {
-            margin-top: 50px;
-            padding-bottom: 50px;
+        /* --- FOOTER BUTTONS --- */
+        .button-group {
+            margin-top: 80px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 4px;
-            margin: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: opacity 0.3s;
+            padding: 15px 40px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            border: 2px solid var(--primary-red);
         }
 
-        .btn-discord { background-color: #ff4d4d; color: white; }
-        .btn-roblox { background-color: #ff4d4d; color: white; }
-        .btn:hover { opacity: 0.8; }
+        .btn-primary {
+            background: var(--primary-red);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-red);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 77, 77, 0.2);
+            filter: brightness(1.2);
+        }
 
     </style>
 </head>
 <body>
 
     <header class="hero">
-        <div class="hero-text">
-            <h1>RHDR Official Wiki</h1>
-            <p>Take charge of a hydroelectric power plant, manage turbines, regulate water flow, monitor systems, and respond to emergencies.</p>
+        <div class="hero-content">
+            <h1>GPS Official Wiki</h1>
+            <p>{NOT DONE}</p>
         </div>
-        <div class="update-box">
-            <h3>Latest Wiki Update</h3>
+
+        <div class="update-card">
+            <h3>Latest System Updates</h3>
             <ul>
-                <li>Revamped Annunciator GUI</li>
-                <li>Completed Ranks and Points</li>
-                <li>Polish Ranks Page</li>
+                <li>• Styling has been done</li>
+                <li>• Factoring everything to GPS</li>
             </ul>
         </div>
     </header>
 
-    <main class="container">
-        <div class="search-container">
-            <p>What are you looking for?</p>
-            <input type="text" placeholder="Search pages...">
+    <main class="main-container">
+        
+        <section class="search-box">
+            <span class="search-label">Database Access</span>
+            <input type="text" placeholder="Search for Games, Info, and Ranks...">
+        </section>
+
+        <section class="wiki-grid">
+            
+            <a href="#" class="wiki-card">
+                <div class="card-image" style="background-image: url('https://via.placeholder.com/400x250/222/888?text=Annunciator')"></div>
+                <div class="card-info">
+                    <h4>Klinton Hydroelectric Power Plant</h4>
+                </div>
+            </a>
+
+            <a href="#" class="wiki-card is-disabled">
+                <div class="card-image" style="background-image: url('https://via.placeholder.com/400x250/222/888?text=Ranks')"></div>
+                <div class="card-info">
+                    <h4>North Mountain Multipurpose Institue</h4>
+                </div>
+            </a>
+
+        </section>
+
+        <div class="button-group">
+            <a href="https://discord.gg/bV4fRT3VJv" class="btn btn-outline">Join Discord</a>
+            <a href="https://www.roblox.com/communities/13805389/Global-Power-Solutions#!/about" class="btn btn-primary">Join Group</a>
         </div>
 
-        <div class="grid">
-            <div class="card disabled">
-                <div class="card-img" style="background-image: url('https://via.placeholder.com/400x200?text=Start+Up');"></div>
-                <div class="card-title">Start Up Guide (DISABLED)</div>
-            </div>
-            <div class="card">
-                <div class="card-img" style="background-image: url('https://via.placeholder.com/400x200?text=Annunciator');"></div>
-                <div class="card-title">Annunciator Guide</div>
-            </div>
-            <div class="card">
-                <div class="card-img" style="background-image: url('https://via.placeholder.com/400x200?text=Ranks');"></div>
-                <div class="card-title">Ranks & Points</div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p style="font-size: 0.8rem; color: #666; margin-bottom: 20px;">Licensed Under Creative Commons Attribution Share Alike 4.0 International</p>
-            <button class="btn btn-discord">Discord</button>
-            <button class="btn btn-roblox">Play on Roblox</button>
-        </div>
     </main>
 
 </body>
