@@ -28,11 +28,69 @@
             line-height: 1.6;
         }
 
+        /* --- STARTUP ANIMATION OVERLAY --- */
+        #startup-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000; /* Loading screen background color */
+            z-index: 9999; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        .startup-content { text-align: center; width: 300px; }
+        
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: 5px;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        .logo-text span { color: var(--primary-red); }
+
+        .loader-bar {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .loader-progress {
+            width: 0%;
+            height: 100%;
+            background: var(--primary-red);
+            animation: loadProgress 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .status-text {
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: var(--primary-red);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        @keyframes loadProgress {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        .loader-hidden { opacity: 0 !important; visibility: hidden !important; }
+
         /* --- HEADER SECTION --- */
         .hero {
             position: relative;
             padding: 100px 10%;
-            /* Change the URL below to change your background image */
+            /* CHANGE URL: This is the large background image behind the title */
             background: linear-gradient(rgba(15,15,15,0.85), rgba(15,15,15,0.95)), 
                         url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
@@ -45,7 +103,7 @@
         }
 
         .hero-content h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem); /* Responsive font size */
+            font-size: clamp(2.5rem, 5vw, 4rem);
             margin: 0;
             color: var(--primary-red);
             text-transform: uppercase;
@@ -53,20 +111,13 @@
             font-weight: 700;
         }
 
-        .hero-content p {
-            max-width: 600px;
-            font-size: 1.1rem;
-            color: var(--text-dim);
-            margin-top: 10px;
-        }
-
         /* --- FLOATING UPDATE BOX --- */
         .update-card {
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px); /* This creates the "Glass" effect */
+            backdrop-filter: blur(10px); /* Creates the frosted glass effect */
             padding: 25px;
             border-radius: 12px;
-            border: 1px solid rgba(255, 77, 77, 0.2); /* Subtle red glow border */
+            border: 1px solid rgba(255, 77, 77, 0.2); 
             width: 350px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
@@ -76,43 +127,18 @@
             color: var(--primary-red);
             font-size: 0.9rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
         }
 
-        .update-card ul {
-            list-style: none;
-            padding: 0;
-            margin: 15px 0 0 0;
-        }
-
-        .update-card li {
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.9rem;
-            color: var(--text-dim);
-        }
-
-        /* --- MAIN CONTENT AREA --- */
+        /* --- MAIN CONTENT & GRID --- */
         .main-container {
             padding: 60px 10%;
             max-width: 1400px;
             margin: 0 auto;
         }
 
-        /* Search Bar Styling */
         .search-box {
             margin-bottom: 60px;
             text-align: center;
-        }
-
-        .search-label {
-            display: block;
-            color: var(--primary-red);
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
         }
 
         .search-box input {
@@ -121,20 +147,19 @@
             padding: 18px 25px;
             background: #151515;
             border: 2px solid var(--border-color);
-            border-radius: 50px; /* Rounded pill shape for "smooth" look */
+            border-radius: 50px; /* Smooth rounded shape */
             color: white;
             font-size: 1rem;
-            transition: all var(--transition-speed) ease;
+            transition: all 0.3s ease;
         }
 
         .search-box input:focus {
             outline: none;
             border-color: var(--primary-red);
             box-shadow: 0 0 20px rgba(255, 77, 77, 0.15);
-            transform: scale(1.02); /* Slight pop when typing */
+            transform: scale(1.02);
         }
 
-        /* --- THE GRID & CARDS --- */
         .wiki-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -151,9 +176,8 @@
             display: block;
         }
 
-        /* Animation when you hover over a card */
         .wiki-card:hover {
-            transform: translateY(-12px); /* Lifts card up */
+            transform: translateY(-12px);
             border-color: var(--primary-red);
             box-shadow: 0 15px 30px rgba(0,0,0,0.6);
         }
@@ -163,34 +187,12 @@
             background-color: #222;
             background-size: cover;
             background-position: center;
-            transition: transform var(--transition-speed) ease;
         }
 
-        /* Zoom effect on image when hovering card */
-        .wiki-card:hover .card-image {
-            transform: scale(1.1);
-        }
+        .card-info { padding: 20px; }
+        .card-info h4 { margin: 0; color: var(--text-main); font-size: 1.1rem; }
 
-        .card-info {
-            padding: 20px;
-            background: var(--card-bg);
-            position: relative;
-            z-index: 2;
-        }
-
-        .card-info h4 {
-            margin: 0;
-            color: var(--text-main);
-            font-size: 1.1rem;
-        }
-
-        /* Greyed out style for disabled pages */
-        .is-disabled {
-            opacity: 0.4;
-            filter: grayscale(1);
-            cursor: not-allowed;
-            pointer-events: none;
-        }
+        .is-disabled { opacity: 0.4; filter: grayscale(1); pointer-events: none; }
 
         /* --- FOOTER BUTTONS --- */
         .button-group {
@@ -207,43 +209,40 @@
             text-decoration: none;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
             border: 2px solid var(--primary-red);
         }
 
-        .btn-primary {
-            background: var(--primary-red);
-            color: white;
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: var(--primary-red);
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(255, 77, 77, 0.2);
-            filter: brightness(1.2);
-        }
+        .btn-primary { background: var(--primary-red); color: white; }
+        .btn-outline { background: transparent; color: var(--primary-red); }
+        .btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
 
     </style>
 </head>
 <body>
 
+<div id="startup-layer">
+        <div class="startup-content">
+            <div class="logo-text">GPS<span>_SYSTEMS</span></div>
+            <div class="loader-bar">
+                <div class="loader-progress"></div>
+            </div>
+            <div class="status-text">INITIALIZING TERMINAL...</div>
+        </div>
+    </div>
+
     <header class="hero">
         <div class="hero-content">
             <h1>GPS Official Wiki</h1>
-            <p>{NOT DONE}</p>
+            <p>Manage the grid, regulate turbine frequency, and prevent failures.</p>
         </div>
 
         <div class="update-card">
             <h3>Latest System Updates</h3>
             <ul>
-                <li>• Styling has been done</li>
-                <li>• Factoring everything to GPS</li>
+                <li>• Styling fully revamped</li>
+                <li>• Transition to GPS Branding</li>
+                <li>• Startup Animation added</li>
             </ul>
         </div>
     </header>
@@ -251,23 +250,22 @@
     <main class="main-container">
         
         <section class="search-box">
-            <span class="search-label">Database Access</span>
             <input type="text" placeholder="Search for Games, Info, and Ranks...">
         </section>
 
         <section class="wiki-grid">
             
             <a href="khpphome.html" class="wiki-card">
-                <div class="card-image" style="background-image: url('https://via.placeholder.com/400x250/222/888?text=Annunciator')"></div>
+                <div class="card-image" style="background-image: url('https://via.placeholder.com/400x250/222/888?text=KHPP')"></div>
                 <div class="card-info">
                     <h4>Klinton Hydroelectric Power Plant</h4>
                 </div>
             </a>
 
             <a href="#" class="wiki-card is-disabled">
-                <div class="card-image" style="background-image: url('https://via.placeholder.com/400x250/222/888?text=Ranks')"></div>
+                <div class="card-image" style="background-image: url('https://via.placeholder.com/400x250/222/888?text=Locked')"></div>
                 <div class="card-info">
-                    <h4>North Mountain Multipurpose Institue (Unavailable)</h4>
+                    <h4>North Mountain Multipurpose Institute (Unavailable)</h4>
                 </div>
             </a>
 
@@ -275,10 +273,20 @@
 
         <div class="button-group">
             <a href="https://discord.gg/bV4fRT3VJv" class="btn btn-outline">Join Discord</a>
-            <a href="https://www.roblox.com/communities/13805389/Global-Power-Solutions#!/about" class="btn btn-primary">Join Group</a>
+            <a href="https://www.roblox.com/communities/13805389/Global-Power-Solutions" class="btn btn-primary">Join Group</a>
         </div>
 
     </main>
+
+    <script>
+        // Logic to hide the loading screen after 2.5 seconds
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('startup-layer');
+            setTimeout(() => {
+                loader.classList.add('loader-hidden');
+            }, 2500);
+        });
+    </script>
 
 </body>
 </html>
