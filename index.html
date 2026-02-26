@@ -9,14 +9,22 @@
 
     <style>
         :root {
-            /* --- COLOR CONTROLS --- */
-            --primary-red: #ff4d4d;       /* Main accent (Borders, Progress bar, Status) */
-            --bg-dark: #0a0a0a;           /* Deepest background */
-            --card-bg: #161616;           /* Card/Box background */
-            --text-main: #ffffff;         /* Primary text */
-            --text-dim: #888888;          /* Faded status/description text */
-            --border-color: #2a2a2a;      /* Subtle UI lines */
-            --transition-speed: 0.4s;     
+            /* --- DAYTIME COLORS (Lighter Charcoal) --- */
+            --primary-red: #ff4d4d;
+            --bg-dark: #161616; 
+            --card-bg: #1e1e1e;
+            --text-main: #ffffff;
+            --text-dim: #888888;
+            --border-color: #2a2a2a;
+            --transition-speed: 0.4s;
+        }
+
+        /* --- NIGHTTIME COLORS (Deep Onyx) --- */
+        /* Triggered automatically by the Script below */
+        body.night-mode {
+            --bg-dark: #0a0a0a; 
+            --card-bg: #111111;
+            --border-color: #1a1a1a;
         }
 
         body {
@@ -25,9 +33,10 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
             overflow-x: hidden;
+            transition: background-color 1s ease; /* Smooth transition when colors shift */
         }
 
-        /* --- 1. STARTUP ANIMATION LAYER --- */
+        /* --- STARTUP ANIMATION LAYER --- */
         #startup-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9999; display: flex;
@@ -38,19 +47,19 @@
         .os-logo { font-weight: 700; font-size: 1.2rem; letter-spacing: 6px; color: #fff; margin-bottom: 20px; }
         .os-logo span { color: var(--primary-red); }
         .loader-bar { width: 100%; height: 2px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
-        .loader-progress { width: 0%; height: 100%; background: var(--primary-red); animation: loadProgress 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        .boot-text { font-family: monospace; font-size: 0.65rem; color: var(--primary-red); letter-spacing: 2px; text-transform: uppercase; opacity: 0.8; }
-        @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
+        .loader-progress { width: 0%; height: 100%; background: var(--primary-red); animation: loadProgress 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .boot-text { font-family: monospace; font-size: 0.65rem; color: var(--primary-red); letter-spacing: 2px; text-transform: uppercase; }
+        
+        @keyframes loadProgress { to { width: 100%; } }
         .loader-hidden { opacity: 0 !important; visibility: hidden !important; }
 
-        /* --- 2. DYNAMIC HERO SECTION --- */
+        /* --- DYNAMIC HERO SECTION --- */
         .hero {
             position: relative;
             padding: 140px 10%;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             border-bottom: 1px solid var(--border-color);
         }
 
@@ -58,20 +67,17 @@
             position: absolute;
             top: -10%; left: -10%;
             width: 120%; height: 120%;
-            /* CHANGE URL: This is your moving background image */
-            background: linear-gradient(rgba(10,10,10,0.7), rgba(10,10,10,0.95)), 
+            background: linear-gradient(rgba(10,10,10,0.75), rgba(10,10,10,0.95)), 
                         url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1600');
             background-size: cover;
             background-position: center;
             z-index: -1;
-            /* transform is handled by JavaScript for mouse tracking */
         }
 
         .hero h1 { font-size: 3.5rem; margin: 0; color: var(--primary-red); font-weight: 700; text-transform: uppercase; letter-spacing: -2px; }
-        .hero p { color: var(--text-dim); max-width: 500px; margin-top: 10px; }
 
-        /* --- 3. STATUS INDICATORS --- */
-        .status-container { display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap; }
+        /* --- STATUS INDICATORS --- */
+        .status-container { display: flex; gap: 15px; margin-top: 25px; }
         .status-pill {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-color);
@@ -82,18 +88,13 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
         .dot { width: 6px; height: 6px; border-radius: 50%; }
-        /* Colors for the dots */
         .online { background: #2ecc71; box-shadow: 0 0 8px #2ecc71; }
-        .warning { background: #f1c40f; box-shadow: 0 0 8px #f1c40f; }
         .offline { background: #e74c3c; box-shadow: 0 0 8px #e74c3c; }
 
-        /* --- 4. SEARCH & WIKI GRID --- */
+        /* --- SEARCH & WIKI GRID --- */
         .main-content { padding: 80px 10%; max-width: 1400px; margin: 0 auto; }
-        
         .search-area { margin-bottom: 70px; text-align: center; }
         .search-area input {
             width: 100%; max-width: 600px; padding: 20px 30px;
@@ -101,7 +102,7 @@
             border-radius: 12px; color: #fff; font-size: 1rem;
             transition: all 0.3s ease;
         }
-        .search-area input:focus { outline: none; border-color: var(--primary-red); box-shadow: 0 0 30px rgba(255,77,77,0.1); }
+        .search-area input:focus { outline: none; border-color: var(--primary-red); }
 
         .wiki-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 35px; }
         
@@ -111,18 +112,13 @@
             transition: all var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: block;
         }
-
-        /* Hover animation */
-        .wiki-card:hover { transform: translateY(-12px); border-color: var(--primary-red); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .wiki-card:hover { transform: translateY(-12px); border-color: var(--primary-red); }
         
         .card-img { height: 200px; background-size: cover; background-position: center; border-bottom: 1px solid var(--border-color); }
         .card-body { padding: 25px; }
-        .card-body h4 { margin: 0; color: #fff; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
-        .card-body p { margin: 10px 0 0 0; font-size: 0.85rem; color: var(--text-dim); }
+        .card-body h4 { margin: 0; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Hidden class for Search Logic */
         .card-hidden { display: none; }
-
     </style>
 </head>
 <body>
@@ -131,76 +127,107 @@
         <div class="startup-content">
             <div class="os-logo">GPS<span>_TERMINAL</span></div>
             <div class="loader-bar"><div class="loader-progress"></div></div>
-            <div class="boot-text">Establishing Secure Connection...</div>
+            <div class="boot-text" id="boot-status">Initializing Hardware...</div>
         </div>
     </div>
 
     <header class="hero">
-        <div id="hero-bg"></div> <h1>GPS Official Wiki</h1>
-        <p>Centralized database for Global Power Solutions facility management and protocols.</p>
-
+        <div id="hero-bg"></div>
+        <h1>GPS Official Wiki</h1>
         <div class="status-container">
             <div class="status-pill"><div class="dot online"></div> KHPP: ACTIVE</div>
-            <div class="status-pill"><div class="dot warning"></div> NMMI: MAINTENANCE</div>
-            <div class="status-pill"><div class="dot online"></div> MAIN GRID: STABLE</div>
+            <div class="status-pill"><div class="dot online"></div> GRID: STABLE</div>
         </div>
     </header>
 
     <main class="main-content">
-        
         <section class="search-area">
-            <input type="text" id="wikiSearch" placeholder="Type to filter database (e.g. 'KHPP', 'Ranks')..." onkeyup="runLiveSearch()">
+            <input type="text" id="wikiSearch" placeholder="Search GPS database..." onkeyup="runLiveSearch()">
         </section>
 
         <section class="wiki-grid" id="wikiGrid">
-            
-            <a href="khpphome.html" class="wiki-card" data-keywords="khpp klinton power plant hydro electric">
-                <div class="card-img" style="background-image: url('https://via.placeholder.com/500x300/222/888?text=KLINTON+PLANT')"></div>
-                <div class="card-body">
-                    <h4>Klinton Hydroelectric Power Plant</h4>
-                    <p>Standard operating procedures for turbine management and water flow.</p>
-                </div>
+            <a href="khpphome.html" class="wiki-card" data-keywords="khpp klinton power plant hydroelectric">
+                <div class="card-img" style="background-image: url('https://via.placeholder.com/500x300/222/888?text=KHPP')"></div>
+                <div class="card-body"><h4>Klinton Hydroelectric Power Plant</h4></div>
             </a>
-
-            <a href="#" class="wiki-card" data-keywords="ranks points levels promotion gps">
+            <a href="#" class="wiki-card" data-keywords="ranks points gps">
                 <div class="card-img" style="background-image: url('https://via.placeholder.com/500x300/222/888?text=RANKS')"></div>
-                <div class="card-body">
-                    <h4>North Mountain Multipurpose Institute</h4>
-                    <p>Information on NMMI.</p>
-                </div>
+                <div class="card-body"><h4>Ranks & Points</h4></div>
             </a>
-
         </section>
     </main>
 
+    <audio id="sndPower" src="power_on.mp3" preload="auto"></audio>
+    <audio id="sndHum" src="system_hum.mp3" preload="auto" loop></audio>
+    <audio id="sndBeep" src="bios_beep.mp3" preload="auto"></audio>
+    <audio id="sndReady" src="ready.mp3" preload="auto"></audio>
     <audio id="sndHover" src="hover.mp3" preload="auto"></audio>
     <audio id="sndClick" src="click.mp3" preload="auto"></audio>
 
     <script>
-        /* 1. STARTUP HIDER logic */
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('startup-layer').classList.add('loader-hidden');
-            }, 2500); // Animation duration
-        });
+        /* 1. DYNAMIC LIGHTING LOGIC */
+        const hour = new Date().getHours();
+        // If it's earlier than 6am or later than 6pm, make it dark
+        if (hour < 6 || hour >= 18) {
+            document.body.classList.add('night-mode');
+            console.log("Night Mode Engaged");
+        }
 
-        /* 2. DYNAMIC BACKGROUND (MOUSE TRACKING) */
+        /* 2. BOOT SEQUENCE SOUNDS */
+        let audioUnlocked = false;
+
+        function startBootSequence() {
+            if(audioUnlocked) return;
+            audioUnlocked = true;
+
+            const pwr = document.getElementById('sndPower');
+            const hum = document.getElementById('sndHum');
+            const beep = document.getElementById('sndBeep');
+            const ready = document.getElementById('sndReady');
+            const status = document.getElementById('boot-status');
+
+            // Play Power On
+            pwr.play();
+            
+            // Step 1: Hum starts
+            setTimeout(() => {
+                hum.volume = 0.3;
+                hum.play();
+                status.innerText = "System Hum Detected...";
+            }, 600);
+
+            // Step 2: BIOS Beep
+            setTimeout(() => {
+                beep.play();
+                status.innerText = "BIOS Check: OK";
+            }, 1600);
+
+            // Step 3: Finish
+            setTimeout(() => {
+                ready.play();
+                hum.pause(); // Stop hum when site opens
+                document.getElementById('startup-layer').classList.add('loader-hidden');
+            }, 2500);
+        }
+
+        // Unlock audio on first interaction
+        window.addEventListener('mousedown', startBootSequence);
+        window.addEventListener('keydown', startBootSequence);
+
+        /* 3. MOUSE TRACKING BG */
         const bg = document.getElementById('hero-bg');
         window.addEventListener('mousemove', (e) => {
-            // Adjust the divisor (30) to make the movement more or less intense
-            const moveX = (window.innerWidth / 2 - e.pageX) / 40;
-            const moveY = (window.innerHeight / 2 - e.pageY) / 40;
+            const moveX = (window.innerWidth / 2 - e.pageX) / 45;
+            const moveY = (window.innerHeight / 2 - e.pageY) / 45;
             bg.style.transform = `translate(${moveX}px, ${moveY}px)`;
         });
 
-        /* 3. LIVE SEARCH LOGIC */
+        /* 4. LIVE SEARCH */
         function runLiveSearch() {
             const input = document.getElementById('wikiSearch').value.toLowerCase();
             const cards = document.querySelectorAll('.wiki-card');
-            
             cards.forEach(card => {
-                const keywords = card.getAttribute('data-keywords');
-                if (keywords.includes(input)) {
+                if (card.getAttribute('data-keywords').includes(input)) {
                     card.classList.remove('card-hidden');
                 } else {
                     card.classList.add('card-hidden');
@@ -208,20 +235,12 @@
             });
         }
 
-        /* 4. SOUND EFFECTS LOGIC */
-        const hoverSound = document.getElementById('sndHover');
-        const clickSound = document.getElementById('sndClick');
-        const allCards = document.querySelectorAll('.wiki-card');
-
-        allCards.forEach(card => {
-            // Plays sound on hover
+        /* 5. UI HOVER SOUNDS */
+        const hvr = document.getElementById('sndHover');
+        document.querySelectorAll('.wiki-card').forEach(card => {
             card.addEventListener('mouseenter', () => {
-                hoverSound.currentTime = 0; // Resets sound to start
-                hoverSound.play().catch(e => {}); // Catch used to prevent browser 'Auto-play blocked' errors
-            });
-            // Plays sound on click
-            card.addEventListener('click', () => {
-                clickSound.play().catch(e => {});
+                hvr.currentTime = 0;
+                hvr.play().catch(e => {});
             });
         });
     </script>
