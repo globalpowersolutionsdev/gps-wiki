@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Documentation | Protocols</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* --- EDIT COLORS HERE --- */
+            --primary-red: #ff4d4d;       /* Brand color (Links, Icons) */
+            --bg-body: #0f0f0f;           /* Main background */
+            --bg-sidebar: #151515;        /* Sidebar background */
+            --bg-card: #1a1a1a;           /* Code blocks/Note boxes */
+            --text-main: #e0e0e0;         /* Primary reading text */
+            --text-muted: #888888;        /* Sidebar links/descriptions */
+            --border: rgba(255, 255, 255, 0.05);
+            --sidebar-width: 280px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden; /* Prevents double scrollbars */
+        }
+
+        /* --- SIDEBAR NAVIGATION --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .logo-area {
+            padding: 10px 10px 30px 10px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary-red);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-group-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin: 25px 10px 10px 10px;
+            font-weight: 700;
+        }
+
+        .nav-link {
+            padding: 10px 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: block;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 77, 77, 0.1);
+            color: var(--primary-red);
+            font-weight: 600;
+        }
+
+        /* --- MAIN CONTENT AREA --- */
+        .content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            padding: 60px 10%;
+        }
+
+        .doc-container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .back-btn:hover { color: var(--primary-red); }
+
+        h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .subtitle { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 40px; }
+
+        section {
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h2 { font-size: 1.8rem; color: var(--primary-red); margin-bottom: 20px; }
+
+        p { line-height: 1.8; margin-bottom: 20px; color: var(--text-main); }
+
+        /* --- NOTE BLOCKS (Like BotGhost) --- */
+        .note {
+            background: var(--bg-card);
+            border-left: 4px solid var(--primary-red);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 30px 0;
+        }
+
+        .note-title {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        /* --- CODE / PROTOCOL STEPS --- */
+        code {
+            background: #2a2a2a;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #ff9f9f;
+        }
+
+        footer {
+            padding: 40px 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo-area">GPS Docs</div>
+
+        <nav>
+            <div class="nav-group-title">Getting Started</div>
+            <a href="index.html" class="nav-link">← Return to Wiki</a>
+            <a href="#intro" class="nav-link active">Overview</a>
+            <a href="#safety" class="nav-link">Safety Protocols</a>
+
+            <div class="nav-group-title">KHPP Operations</div>
+            <a href="#startup" class="nav-link">Turbine Startup</a>
+            <a href="#emergency" class="nav-link">Emergency Shutdown</a>
+            
+            <div class="nav-group-title">Annunciator</div>
+            <a href="#faults" class="nav-link">Fault Indicators</a>
+        </nav>
+    </aside>
+
+    <main class="content-wrapper">
+        <div class="doc-container">
+            
+            <a href="khpphome.html" class="back-btn">← Back to KHPP Home</a>
+            
+            <header>
+                <h1>Facility Startup Protocols</h1>
+                <p class="subtitle">Standard operating procedures for the Klinton Hydroelectric Power Plant.</p>
+            </header>
+
+            <section id="intro">
+                <h2>Introduction</h2>
+                <p>
+                    Welcome to the official GPS operating manual. This documentation is designed to assist Junior Operators 
+                    and Engineers in the safe management of hydroelectric assets. Failure to follow these steps 
+                    may result in a <code>GRID_CASCADE_FAILURE</code>.
+                </p>
+                
+                <div class="note">
+                    <span class="note-title">Pro Tip</span>
+                    Always check the frequency meters before engaging the main breaker. Stability should be at exactly 60Hz.
+                </div>
+            </section>
+
+            <section id="startup">
+                <h2>Turbine Startup</h2>
+                <p>To begin energy production, follow these steps in order:</p>
+                <ol>
+                    <li>Open <strong>Penstock Valve A-1</strong> to 15% flow.</li>
+                    <li>Wait for <strong>RPM Gauge</strong> to reach 300.</li>
+                    <li>Synchronize Phase 1 with the Main Grid.</li>
+                </ol>
+            </section>
+
+            <section id="faults">
+                <h2>Fault Indicators</h2>
+                <p>If you see a flashing light on the Annunciator panel, refer to the specific fault code below.</p>
+                <p>Most common faults are caused by over-voltage or low lubricant pressure in Turbine 2.</p>
+            </section>
+
+            <footer>
+                <span>Last updated: February 2026</span>
+                <span>Global Power Solutions ©</span>
+            </footer>
+
+        </div>
+    </main>
+
+</body>
+</html>
