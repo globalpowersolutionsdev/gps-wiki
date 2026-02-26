@@ -3,290 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS Official Wiki</title>
+    <title>GPS Official Wiki | Terminal</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            /* --- COLOR PALETTE: CHANGE THESE TO CHANGE THE WHOLE SITE --- */
-            --primary-red: #ff4d4d;       /* Main accent color (Buttons, Titles) */
-            --bg-dark: #0f0f0f;           /* Deepest background color */
-            --card-bg: #1a1a1a;           /* Background color for the boxes/cards */
-            --text-main: #ffffff;         /* Main text color */
-            --text-dim: #a0a0a0;          /* Faded text for descriptions */
-            --border-color: #333333;      /* Subtle border lines */
-            --transition-speed: 0.4s;     /* How "smooth" the animations feel */
+            /* --- COLOR CONTROLS --- */
+            --primary-red: #ff4d4d;       /* Main accent (Borders, Progress bar, Status) */
+            --bg-dark: #0a0a0a;           /* Deepest background */
+            --card-bg: #161616;           /* Card/Box background */
+            --text-main: #ffffff;         /* Primary text */
+            --text-dim: #888888;          /* Faded status/description text */
+            --border-color: #2a2a2a;      /* Subtle UI lines */
+            --transition-speed: 0.4s;     
         }
 
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
-            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* --- STARTUP ANIMATION OVERLAY --- */
+        /* --- 1. STARTUP ANIMATION LAYER --- */
         #startup-layer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000000; /* Loading screen background color */
-            z-index: 9999; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.8s ease, visibility 0.8s;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; display: flex;
+            justify-content: center; align-items: center;
+            transition: opacity 1s ease, visibility 1s;
         }
-
-        .startup-content { text-align: center; width: 300px; }
-        
-        .logo-text {
-            font-weight: 700;
-            font-size: 1.5rem;
-            letter-spacing: 5px;
-            color: #ffffff;
-            margin-bottom: 20px;
-        }
-        .logo-text span { color: var(--primary-red); }
-
-        .loader-bar {
-            width: 100%;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-
-        .loader-progress {
-            width: 0%;
-            height: 100%;
-            background: var(--primary-red);
-            animation: loadProgress 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        .status-text {
-            font-family: monospace;
-            font-size: 0.7rem;
-            color: var(--primary-red);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        @keyframes loadProgress {
-            0% { width: 0%; }
-            50% { width: 70%; }
-            100% { width: 100%; }
-        }
-
+        .startup-content { text-align: center; width: 320px; }
+        .os-logo { font-weight: 700; font-size: 1.2rem; letter-spacing: 6px; color: #fff; margin-bottom: 20px; }
+        .os-logo span { color: var(--primary-red); }
+        .loader-bar { width: 100%; height: 2px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
+        .loader-progress { width: 0%; height: 100%; background: var(--primary-red); animation: loadProgress 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .boot-text { font-family: monospace; font-size: 0.65rem; color: var(--primary-red); letter-spacing: 2px; text-transform: uppercase; opacity: 0.8; }
+        @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
         .loader-hidden { opacity: 0 !important; visibility: hidden !important; }
 
-        /* --- HEADER SECTION --- */
+        /* --- 2. DYNAMIC HERO SECTION --- */
         .hero {
             position: relative;
-            padding: 100px 10%;
-            /* CHANGE URL: This is the large background image behind the title */
-            background: linear-gradient(rgba(15,15,15,0.85), rgba(15,15,15,0.95)), 
-                        url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1920&q=80');
+            padding: 140px 10%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        #hero-bg {
+            position: absolute;
+            top: -10%; left: -10%;
+            width: 120%; height: 120%;
+            /* CHANGE URL: This is your moving background image */
+            background: linear-gradient(rgba(10,10,10,0.7), rgba(10,10,10,0.95)), 
+                        url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1600');
             background-size: cover;
             background-position: center;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 30px;
+            z-index: -1;
+            /* transform is handled by JavaScript for mouse tracking */
         }
 
-        .hero-content h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            margin: 0;
-            color: var(--primary-red);
-            text-transform: uppercase;
-            letter-spacing: -1px;
-            font-weight: 700;
-        }
+        .hero h1 { font-size: 3.5rem; margin: 0; color: var(--primary-red); font-weight: 700; text-transform: uppercase; letter-spacing: -2px; }
+        .hero p { color: var(--text-dim); max-width: 500px; margin-top: 10px; }
 
-        /* --- FLOATING UPDATE BOX --- */
-        .update-card {
+        /* --- 3. STATUS INDICATORS --- */
+        .status-container { display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap; }
+        .status-pill {
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px); /* Creates the frosted glass effect */
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 77, 77, 0.2); 
-            width: 350px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        .update-card h3 {
-            margin-top: 0;
-            color: var(--primary-red);
-            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        /* Colors for the dots */
+        .online { background: #2ecc71; box-shadow: 0 0 8px #2ecc71; }
+        .warning { background: #f1c40f; box-shadow: 0 0 8px #f1c40f; }
+        .offline { background: #e74c3c; box-shadow: 0 0 8px #e74c3c; }
 
-        /* --- MAIN CONTENT & GRID --- */
-        .main-container {
-            padding: 60px 10%;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .search-box {
-            margin-bottom: 60px;
-            text-align: center;
-        }
-
-        .search-box input {
-            width: 100%;
-            max-width: 700px;
-            padding: 18px 25px;
-            background: #151515;
-            border: 2px solid var(--border-color);
-            border-radius: 50px; /* Smooth rounded shape */
-            color: white;
-            font-size: 1rem;
+        /* --- 4. SEARCH & WIKI GRID --- */
+        .main-content { padding: 80px 10%; max-width: 1400px; margin: 0 auto; }
+        
+        .search-area { margin-bottom: 70px; text-align: center; }
+        .search-area input {
+            width: 100%; max-width: 600px; padding: 20px 30px;
+            background: #111; border: 1px solid var(--border-color);
+            border-radius: 12px; color: #fff; font-size: 1rem;
             transition: all 0.3s ease;
         }
+        .search-area input:focus { outline: none; border-color: var(--primary-red); box-shadow: 0 0 30px rgba(255,77,77,0.1); }
 
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--primary-red);
-            box-shadow: 0 0 20px rgba(255, 77, 77, 0.15);
-            transform: scale(1.02);
-        }
-
-        .wiki-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
+        .wiki-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 35px; }
+        
         .wiki-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            overflow: hidden;
+            background: var(--card-bg); border-radius: 16px; overflow: hidden;
+            border: 1px solid var(--border-color); text-decoration: none;
             transition: all var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid var(--border-color);
-            text-decoration: none;
             display: block;
         }
 
-        .wiki-card:hover {
-            transform: translateY(-12px);
-            border-color: var(--primary-red);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
-        }
+        /* Hover animation */
+        .wiki-card:hover { transform: translateY(-12px); border-color: var(--primary-red); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        
+        .card-img { height: 200px; background-size: cover; background-position: center; border-bottom: 1px solid var(--border-color); }
+        .card-body { padding: 25px; }
+        .card-body h4 { margin: 0; color: #fff; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
+        .card-body p { margin: 10px 0 0 0; font-size: 0.85rem; color: var(--text-dim); }
 
-        .card-image {
-            height: 200px;
-            background-color: #222;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .card-info { padding: 20px; }
-        .card-info h4 { margin: 0; color: var(--text-main); font-size: 1.1rem; }
-
-        .is-disabled { opacity: 0.4; filter: grayscale(1); pointer-events: none; }
-
-        /* --- FOOTER BUTTONS --- */
-        .button-group {
-            margin-top: 80px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 15px 40px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 700;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-            border: 2px solid var(--primary-red);
-        }
-
-        .btn-primary { background: var(--primary-red); color: white; }
-        .btn-outline { background: transparent; color: var(--primary-red); }
-        .btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
+        /* Hidden class for Search Logic */
+        .card-hidden { display: none; }
 
     </style>
 </head>
 <body>
 
-<div id="startup-layer">
+    <div id="startup-layer">
         <div class="startup-content">
-            <div class="logo-text">GPS<span>_SYSTEMS</span></div>
-            <div class="loader-bar">
-                <div class="loader-progress"></div>
-            </div>
-            <div class="status-text">INITIALIZING TERMINAL...</div>
+            <div class="os-logo">GPS<span>_TERMINAL</span></div>
+            <div class="loader-bar"><div class="loader-progress"></div></div>
+            <div class="boot-text">Establishing Secure Connection...</div>
         </div>
     </div>
 
     <header class="hero">
-        <div class="hero-content">
-            <h1>GPS Official Wiki</h1>
-            <p>Manage the grid, regulate turbine frequency, and prevent failures.</p>
-        </div>
+        <div id="hero-bg"></div> <h1>GPS Official Wiki</h1>
+        <p>Centralized database for Global Power Solutions facility management and protocols.</p>
 
-        <div class="update-card">
-            <h3>Latest System Updates</h3>
-            <ul>
-                <li>Styling fully revamped</li>
-                <li>Transition to GPS Branding</li>
-                <li>Startup Animation added</li>
-            </ul>
+        <div class="status-container">
+            <div class="status-pill"><div class="dot online"></div> KHPP: ACTIVE</div>
+            <div class="status-pill"><div class="dot warning"></div> NMMI: MAINTENANCE</div>
+            <div class="status-pill"><div class="dot online"></div> MAIN GRID: STABLE</div>
         </div>
     </header>
 
-    <main class="main-container">
+    <main class="main-content">
         
-        <section class="search-box">
-            <input type="text" placeholder="Search for Games, Info, and Ranks...">
+        <section class="search-area">
+            <input type="text" id="wikiSearch" placeholder="Type to filter database (e.g. 'KHPP', 'Ranks')..." onkeyup="runLiveSearch()">
         </section>
 
-        <section class="wiki-grid">
+        <section class="wiki-grid" id="wikiGrid">
             
-            <a href="khpphome.html" class="wiki-card">
-                <div class="card-image" style="background-image: url('https://via.placeholder.com/400x250/222/888?text=KHPP')"></div>
-                <div class="card-info">
+            <a href="khpphome.html" class="wiki-card" data-keywords="khpp klinton power plant hydro electric">
+                <div class="card-img" style="background-image: url('https://via.placeholder.com/500x300/222/888?text=KLINTON+PLANT')"></div>
+                <div class="card-body">
                     <h4>Klinton Hydroelectric Power Plant</h4>
+                    <p>Standard operating procedures for turbine management and water flow.</p>
                 </div>
             </a>
 
-            <a href="#" class="wiki-card is-disabled">
-                <div class="card-image" style="background-image: url('https://via.placeholder.com/400x250/222/888?text=Locked')"></div>
-                <div class="card-info">
-                    <h4>North Mountain Multipurpose Institute (Unavailable)</h4>
+            <a href="#" class="wiki-card" data-keywords="ranks points levels promotion gps">
+                <div class="card-img" style="background-image: url('https://via.placeholder.com/500x300/222/888?text=RANKS')"></div>
+                <div class="card-body">
+                    <h4>North Mountain Multipurpose Institute</h4>
+                    <p>Information on NMMI.</p>
                 </div>
             </a>
 
         </section>
-
-        <div class="button-group">
-            <a href="https://discord.gg/bV4fRT3VJv" class="btn btn-outline">Join Discord</a>
-            <a href="https://www.roblox.com/communities/13805389/Global-Power-Solutions" class="btn btn-primary">Join Group</a>
-        </div>
-
     </main>
 
+    <audio id="sndHover" src="hover.mp3" preload="auto"></audio>
+    <audio id="sndClick" src="click.mp3" preload="auto"></audio>
+
     <script>
-        // Logic to hide the loading screen after 2.5 seconds
+        /* 1. STARTUP HIDER logic */
         window.addEventListener('load', () => {
-            const loader = document.getElementById('startup-layer');
             setTimeout(() => {
-                loader.classList.add('loader-hidden');
-            }, 2500);
+                document.getElementById('startup-layer').classList.add('loader-hidden');
+            }, 2500); // Animation duration
+        });
+
+        /* 2. DYNAMIC BACKGROUND (MOUSE TRACKING) */
+        const bg = document.getElementById('hero-bg');
+        window.addEventListener('mousemove', (e) => {
+            // Adjust the divisor (30) to make the movement more or less intense
+            const moveX = (window.innerWidth / 2 - e.pageX) / 40;
+            const moveY = (window.innerHeight / 2 - e.pageY) / 40;
+            bg.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        });
+
+        /* 3. LIVE SEARCH LOGIC */
+        function runLiveSearch() {
+            const input = document.getElementById('wikiSearch').value.toLowerCase();
+            const cards = document.querySelectorAll('.wiki-card');
+            
+            cards.forEach(card => {
+                const keywords = card.getAttribute('data-keywords');
+                if (keywords.includes(input)) {
+                    card.classList.remove('card-hidden');
+                } else {
+                    card.classList.add('card-hidden');
+                }
+            });
+        }
+
+        /* 4. SOUND EFFECTS LOGIC */
+        const hoverSound = document.getElementById('sndHover');
+        const clickSound = document.getElementById('sndClick');
+        const allCards = document.querySelectorAll('.wiki-card');
+
+        allCards.forEach(card => {
+            // Plays sound on hover
+            card.addEventListener('mouseenter', () => {
+                hoverSound.currentTime = 0; // Resets sound to start
+                hoverSound.play().catch(e => {}); // Catch used to prevent browser 'Auto-play blocked' errors
+            });
+            // Plays sound on click
+            card.addEventListener('click', () => {
+                clickSound.play().catch(e => {});
+            });
         });
     </script>
-
 </body>
 </html>
