@@ -3,229 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS | SECURE TERMINAL</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-
+    <title>GPS Official Wiki | Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-red: #ff4d4d;
-            --bg-dark: #000000; /* Pure black like your screenshot */
-            --border-color: #111111;
+            --bg-dark: #161616; 
+            --card-bg: #1e1e1e;
+            --text-main: #ffffff;
+            --text-dim: #888888;
+            --border-color: #2a2a2a;
         }
 
-        body, html {
+        body.night-mode {
+            --bg-dark: #0a0a0a; 
+            --card-bg: #111111;
+        }
+
+        body {
             margin: 0; padding: 0;
-            height: 100%;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg-dark);
-            color: white;
-            font-family: 'Share Tech Mono', monospace;
+            color: var(--text-main);
+            overflow-x: hidden;
+            transition: background-color 1s ease;
+        }
+
+        /* --- STARTUP ANIMATION --- */
+        #startup-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; display: flex;
+            justify-content: center; align-items: center;
+            transition: opacity 1s ease, visibility 1s;
+        }
+        .startup-content { text-align: center; width: 320px; }
+        .os-logo { font-weight: 700; font-size: 1.2rem; letter-spacing: 6px; color: #fff; margin-bottom: 20px; }
+        .os-logo span { color: var(--primary-red); }
+        .loader-bar { width: 100%; height: 2px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
+        .loader-progress { width: 0%; height: 100%; background: var(--primary-red); animation: loadProgress 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes loadProgress { to { width: 100%; } }
+        .loader-hidden { opacity: 0 !important; visibility: hidden !important; }
+
+        /* --- HERO & DYNAMIC BG --- */
+        .hero {
+            position: relative;
+            padding: 140px 10%;
             overflow: hidden;
-        }
-
-        /* --- MATRIX BACKGROUND --- */
-        #matrix-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            z-index: 1;
-            opacity: 0.1;
-            pointer-events: none;
-        }
-
-        /* --- BEAUTIFIED LOGIN BOX --- */
-        #login-screen {
-            position: fixed;
-            inset: 0;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            background: #000;
-            transition: opacity 1s ease;
+            flex-direction: column;
+            border-bottom: 1px solid var(--border-color);
+        }
+        #hero-bg {
+            position: absolute; top: -10%; left: -10%; width: 120%; height: 120%;
+            background: linear-gradient(rgba(10,10,10,0.75), rgba(10,10,10,0.95)), 
+                        url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1600');
+            background-size: cover; z-index: -1;
         }
 
-        .login-box {
-            width: 400px;
-            padding: 40px;
-            border: 1px solid #1a1a1a;
-            background: rgba(5, 5, 5, 0.8);
-            text-align: center;
-            box-shadow: 0 0 50px rgba(0,0,0,1);
-            z-index: 1001;
+        /* --- STATUS PILLS --- */
+        .status-container { display: flex; gap: 15px; margin-top: 25px; }
+        .status-pill {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color);
+            padding: 6px 14px; border-radius: 50px; font-size: 0.7rem; font-weight: 600;
+            display: flex; align-items: center; gap: 8px;
         }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        .online { background: #2ecc71; box-shadow: 0 0 8px #2ecc71; }
 
-        /* The Biometric Eye */
-        .eye-scanner {
-            width: 60px; height: 60px;
-            margin: 0 auto 20px;
-            border: 1px solid var(--primary-red);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            position: relative;
-            box-shadow: 0 0 15px rgba(255, 77, 77, 0.2);
+        /* --- WIKI GRID --- */
+        .main-content { padding: 80px 10%; max-width: 1400px; margin: 0 auto; }
+        .wiki-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 35px; }
+        .wiki-card {
+            background: var(--card-bg); border-radius: 16px; overflow: hidden;
+            border: 1px solid var(--border-color); text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: block;
         }
-
-        .eye-scanner::before {
-            content: "";
-            position: absolute;
-            width: 100%; height: 2px;
-            background: var(--primary-red);
-            box-shadow: 0 0 10px var(--primary-red);
-            animation: scan 2s infinite ease-in-out;
-        }
-
-        @keyframes scan { 0%, 100% { top: 10%; opacity: 0; } 50% { top: 90%; opacity: 1; } }
-
-        .login-box h5 { margin: 0; font-size: 0.7rem; color: #444; letter-spacing: 3px; }
-        .login-box h2 { margin: 10px 0 30px; color: var(--primary-red); letter-spacing: 5px; font-size: 1.5rem; }
-
-        #passInput {
-            width: 100%;
-            background: #000;
-            border: 1px solid #222;
-            padding: 15px;
-            color: var(--primary-red);
-            font-family: inherit;
-            font-size: 1rem;
-            text-align: center;
-            outline: none;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-        }
-
-        .verify-btn {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary-red);
-            color: #000;
-            border: none;
-            font-weight: bold;
-            font-family: inherit;
-            cursor: pointer;
-            letter-spacing: 2px;
-            transition: 0.3s;
-        }
-
-        .verify-btn:hover { background: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
-
-        /* --- DASHBOARD --- */
-        #secure-dashboard {
-            display: none;
-            padding: 50px 10%;
-            position: relative;
-            z-index: 10;
-        }
-
-        .terminal-feed {
-            background: #050505;
-            border: 1px solid #111;
-            padding: 20px;
-            color: #0f0;
-            height: 300px;
-            overflow-y: auto;
-            margin: 20px 0;
-            font-size: 0.9rem;
-        }
-
-        .terminate-btn {
-            color: #444;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-
-        .terminate-btn:hover { color: var(--primary-red); }
-
-        .error-shake { animation: shake 0.4s; border-color: red !important; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        .wiki-card:hover { transform: translateY(-12px); border-color: var(--primary-red); }
+        .card-img { height: 200px; background-size: cover; background-position: center; border-bottom: 1px solid var(--border-color); }
+        .card-body { padding: 25px; }
     </style>
 </head>
 <body>
 
-    <canvas id="matrix-canvas"></canvas>
-
-    <div id="login-screen">
-        <div class="login-box">
-            <div class="eye-scanner">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ff4d4d" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-            </div>
-            <h5>SECURE BYPASS PROTOCOL</h5>
-            <h2>ACCESS REQUIRED</h2>
-            <input type="password" id="passInput" placeholder="CLEARANCE CODE">
-            <button class="verify-btn" onclick="checkClearance()">Verify Identity</button>
+    <div id="startup-layer">
+        <div class="startup-content">
+            <div class="os-logo">GPS<span>_TERMINAL</span></div>
+            <div class="loader-bar"><div class="loader-progress"></div></div>
+            <div style="font-family:monospace; font-size:0.6rem; color:var(--primary-red);">INITIALIZING...</div>
         </div>
     </div>
 
-    <main id="secure-dashboard">
-        <h1 style="color:var(--primary-red)">ADMINISTRATIVE TERMINAL</h1>
-        <div class="terminal-feed" id="log-box">> SYSTEM READY...</div>
-        <a class="terminate-btn" onclick="runTerminate()">TERMINATE SESSION</a>
+    <header class="hero">
+        <div id="hero-bg"></div>
+        <h1 style="color:var(--primary-red); font-size:3.5rem; margin:0;">GPS Official Wiki</h1>
+        <div class="status-container">
+            <div class="status-pill"><div class="dot online"></div> KHPP: ACTIVE</div>
+            <div class="status-pill"><div class="dot online"></div> GRID: STABLE</div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="wiki-grid">
+            <a href="khpphome.html" class="wiki-card">
+                <div class="card-img" style="background-image: url('https://via.placeholder.com/500x300/222/888?text=KHPP')"></div>
+                <div class="card-body"><h4>Klinton Hydroelectric</h4></div>
+            </a>
+            <a href="secure.html" class="wiki-card">
+                <div class="card-img" style="background-image: url('https://via.placeholder.com/500x300/222/888?text=SECURE')"></div>
+                <div class="card-body"><h4>Personnel Terminal</h4></div>
+            </a>
+        </div>
     </main>
 
-    <audio id="sndGrant" src="granted.mp3"></audio>
-    <audio id="sndDeny" src="denied.mp3"></audio>
-    <audio id="sndType" src="terminal_type.mp3"></audio>
-    <audio id="sndShutdown" src="shutdown.mp3"></audio>
-
     <script>
-        // Matrix Rain
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const drops = Array(Math.floor(canvas.width/14)).fill(1);
-        function draw() {
-            ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "#ff4d4d"; drops.forEach((y, i) => {
-                ctx.fillText(Math.floor(Math.random()*2), i*14, y*14);
-                if(y*14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
-            });
-        }
-        setInterval(draw, 50);
+        // Start Logic
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('startup-layer').classList.add('loader-hidden');
+            }, 2500);
+        });
 
-        // Clearance Logic
-        function checkClearance() {
-            const input = document.getElementById('passInput');
-            if(input.value.toUpperCase() === "GPS2026") {
-                document.getElementById('sndGrant').play().catch(e=>{});
-                document.getElementById('login-screen').style.opacity = "0";
-                setTimeout(() => {
-                    document.getElementById('login-screen').style.display = "none";
-                    document.getElementById('secure-dashboard').style.display = "block";
-                }, 1000);
-            } else {
-                document.getElementById('sndDeny').play().catch(e=>{});
-                input.classList.add('error-shake');
-                setTimeout(() => { input.classList.remove('error-shake'); input.value=""; }, 400);
-            }
-        }
-
-        // Terminal Logging
-        function writeLog(text, color = "#0f0") {
-            const box = document.getElementById('log-box');
-            box.innerHTML += `<br><span style="color:${color}">${text}</span>`;
-            box.scrollTop = box.scrollHeight;
-            document.getElementById('sndType').currentTime = 0;
-            document.getElementById('sndType').play().catch(e=>{});
-        }
-
-        // --- FIXED TERMINATE SEQUENCE ---
-        async function runTerminate() {
-            const lines = [
-                "[!] INITIATING SESSION WIPE...",
-                "> SCRUBBING PERSONNEL DATABASE...",
-                "> PURGING CACHE NODES...",
-                "> DISCONNECTING UPLINK...",
-                "> SESSION TERMINATED."
-            ];
-
-            for (let line of lines) {
-                writeLog(line, "red");
-                await new Promise(r => setTimeout(r, 600)); // Forces the code to WAIT
-            }
-
-            document.getElementById('sndShutdown').play().catch(e=>{});
-            setTimeout(() => { window.location.href = "index.html"; }, 1500);
-        }
+        // Mouse Move BG
+        const bg = document.getElementById('hero-bg');
+        window.addEventListener('mousemove', (e) => {
+            const moveX = (window.innerWidth / 2 - e.pageX) / 45;
+            const moveY = (window.innerHeight / 2 - e.pageY) / 45;
+            bg.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        });
     </script>
 </body>
 </html>
