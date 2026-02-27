@@ -1,11 +1,3 @@
-It sounds like two things are happening: the "Redirect" is happening before the "Sequence" has a chance to play, and the browser is still muting the audio because it hasn't been "primed."
-
-The reason you don't hear anything is likely because you haven't uploaded the .mp3 files to GitHub yet. Browsers won't play sounds if the files don't exist at the exact link provided.
-
-Here is the Full Corrected secure.html with a "Wait" timer for the termination sequence and a "Sound Unlocker."
-
-The Corrected secure.html
-HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
