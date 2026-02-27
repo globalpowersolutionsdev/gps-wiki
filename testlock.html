@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS | SECURE TERMINAL</title>
+    <title>GPS | SECURE PERSONNEL TERMINAL</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
@@ -11,6 +11,8 @@
         :root {
             --primary-red: #ff4d4d;
             --bg-dark: #0a0a0a;
+            --panel-bg: rgba(20, 20, 20, 0.95);
+            --accent-glow: rgba(255, 77, 77, 0.3);
             --border-color: #2a2a2a;
         }
 
@@ -19,188 +21,301 @@
             height: 100%;
             background-color: var(--bg-dark);
             color: white;
-            font-family: 'Share Tech Mono', monospace; /* Futuristic terminal font */
-            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- MATRIX CANVAS BACKGROUND --- */
+        #matrix-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 1;
+            opacity: 0.15; /* Keeps it subtle so it doesn't distract */
         }
 
         /* --- LOGIN OVERLAY --- */
         #login-screen {
             position: fixed;
             inset: 0;
-            background: radial-gradient(circle, #111 0%, #000 100%);
+            background: radial-gradient(circle at center, #151515 0%, #000 100%);
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 100;
-            transition: transform 0.8s cubic-bezier(0.87, 0, 0.13, 1);
+            z-index: 1000;
+            transition: all 1s cubic-bezier(0.85, 0, 0.15, 1);
         }
 
         .login-box {
+            position: relative;
+            z-index: 1001;
             text-align: center;
-            border: 1px solid var(--border-color);
-            padding: 40px;
-            background: rgba(255,255,255,0.02);
-            backdrop-filter: blur(10px);
-            border-radius: 8px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            padding: 50px;
+            border: 1px solid var(--primary-red);
+            background: rgba(0,0,0,0.8);
+            box-shadow: 0 0 30px var(--accent-glow);
+            border-radius: 4px;
         }
 
-        .warning-text {
+        .login-box h2 {
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 8px;
             color: var(--primary-red);
-            font-size: 0.8rem;
-            margin-bottom: 20px;
-            letter-spacing: 2px;
-            animation: flicker 2s infinite;
+            margin-bottom: 30px;
         }
 
-        input {
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid var(--border-color);
+        #passInput {
+            background: #111;
+            border: 1px solid var(--border-color);
+            padding: 15px;
             color: var(--primary-red);
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             text-align: center;
+            width: 300px;
             outline: none;
-            padding: 10px;
-            width: 250px;
-            transition: border-color 0.3s;
         }
 
-        input:focus {
+        /* --- DASHBOARD CONTENT --- */
+        #secure-dashboard {
+            position: relative;
+            z-index: 10;
+            padding: 60px 8%;
+            display: none; /* Shown after password */
+            animation: fadeIn 1.5s ease;
+        }
+
+        .header-main {
+            border-bottom: 2px solid var(--primary-red);
+            padding-bottom: 20px;
+            margin-bottom: 50px;
+        }
+
+        .header-main h1 {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 2.5rem;
+            margin: 0;
+            letter-spacing: 4px;
+        }
+
+        /* --- DEPARTMENT GRID --- */
+        .dept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .dept-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            position: relative;
+            transition: 0.3s;
+            overflow: hidden;
+        }
+
+        .dept-card::before {
+            content: "SECURE";
+            position: absolute;
+            top: 10px; right: -20px;
+            background: var(--primary-red);
+            color: black;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 25px;
+            transform: rotate(45deg);
+        }
+
+        .dept-card:hover {
             border-color: var(--primary-red);
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-5px);
         }
 
-        .hint {
-            margin-top: 15px;
-            font-size: 0.7rem;
-            color: #555;
-        }
-
-        /* --- CLASSIFIED CONTENT (Hidden by default) --- */
-        #secure-content {
-            padding: 60px 10%;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 1s ease 0.5s;
-        }
-
-        .classified-header {
-            border-left: 5px solid var(--primary-red);
-            padding-left: 20px;
-            margin-bottom: 40px;
-        }
-
-        .redacted {
-            background: #333;
-            color: #333;
-            padding: 0 5px;
-            cursor: help;
-            transition: background 0.3s;
-        }
-
-        .redacted:hover {
-            background: transparent;
+        .dept-name {
             color: var(--primary-red);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            display: block;
         }
 
-        /* --- ANIMATIONS --- */
-        @keyframes flicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-            52% { opacity: 1; }
-            54% { opacity: 0.4; }
+        .action-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.8rem;
+            border-bottom: 1px solid var(--primary-red);
+            padding-bottom: 2px;
         }
 
+        /* --- LIVE TERMINAL FEED --- */
+        .terminal-feed {
+            background: #000;
+            border: 1px solid #1a1a1a;
+            padding: 20px;
+            font-family: 'Share Tech Mono', monospace;
+            color: #00ff00; /* Classic Terminal Green */
+            font-size: 0.85rem;
+            height: 200px;
+            overflow-y: hidden;
+            border-radius: 4px;
+        }
+
+        /* --- UTILS --- */
         .access-granted #login-screen {
-            transform: translateY(-100%);
+            transform: scale(1.5);
+            opacity: 0;
+            pointer-events: none;
         }
 
-        .access-granted #secure-content {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .error-shake {
-            animation: shake 0.4s;
-            border-bottom-color: var(--primary-red) !important;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
+    <canvas id="matrix-canvas"></canvas>
+
     <div id="login-screen">
         <div class="login-box">
-            <div class="warning-text">UNAUTHORIZED ACCESS IS PROHIBITED</div>
-            <h2 style="margin-bottom: 30px; letter-spacing: 5px;">ENTER CLEARANCE CODE</h2>
-            <input type="password" id="passInput" placeholder="********" autocomplete="off">
-            <div class="hint">GPS ENCRYPTION LEVEL 4 ACTIVE</div>
+            <div style="font-size: 10px; color: #555; margin-bottom: 10px; letter-spacing: 2px;">GLOBAL POWER SOLUTIONS • INTERNAL AFFAIRS</div>
+            <h2>ACCESS REQUIRED</h2>
+            <input type="password" id="passInput" placeholder="CLEARANCE CODE" autocomplete="off">
+            <p id="error-msg" style="color:var(--primary-red); font-size: 12px; margin-top: 15px; display: none;">INVALID CLEARANCE CODE</p>
         </div>
     </div>
 
-    <main id="secure-content">
-        <div class="classified-header">
-            <h1 style="color: var(--primary-red); margin: 0;">CLASSIFIED DATABASE</h1>
-            <p style="color: #888;">Clearance Level: ADMINISTRATOR</p>
-        </div>
+    <main id="secure-dashboard">
+        <header class="header-main">
+            <div style="font-size: 0.8rem; color: var(--primary-red); letter-spacing: 3px;">CENTRAL COMMAND TERMINAL</div>
+            <h1>GPS STAFF SYSTEM</h1>
+        </header>
 
-        <section style="max-width: 800px; line-height: 2;">
-            <h2>Project <span class="redacted">OMEGA_STREAM</span></h2>
-            <p>On February 14th, facility engineers detected a <span class="redacted">massive frequency surge</span> in the lower levels of KHPP. 
-            The source was identified as <span class="redacted">REDACTED DATA POINT</span>.</p>
-            
-            <p>Status: <span style="color: var(--primary-red);">CRITICAL</span></p>
-            
-            <div style="margin-top: 50px; border: 1px dashed #333; padding: 20px;">
-                <h3>Administrator Logs</h3>
-                <ul style="list-style: none; padding: 0; color: #aaa; font-size: 0.9rem;">
-                    <li>• Bypass Code for Turbine 2: <code>8842-GPS</code></li>
-                    <li>• Emergency Ventilation: <span class="redacted">Sector 7 Only</span></li>
-                    <li>• Internal Memo: Do not mention the <span class="redacted">void incidents</span> to Junior Staff.</li>
-                </ul>
+        <div class="dept-grid">
+            <div class="dept-card">
+                <span class="dept-name">Administration</span>
+                <p style="font-size: 0.85rem; color: #888;">Executive oversight, facility permissions, and global event management.</p>
+                <a href="#" class="action-link">ACCESS LOGS</a>
             </div>
 
-            <a href="index.html" style="display:inline-block; margin-top: 40px; color: var(--primary-red); text-decoration: none;">← TERMINATE SESSION</a>
-        </section>
+            <div class="dept-card">
+                <span class="dept-name">Compliance</span>
+                <p style="font-size: 0.85rem; color: #888;">Protocol enforcement, rule variations, and operator conduct reviews.</p>
+                <a href="#" class="action-link">REGULATION DB</a>
+            </div>
+
+            <div class="dept-card">
+                <span class="dept-name">Communications</span>
+                <p style="font-size: 0.85rem; color: #888;">Public relations, announcements, and cross-department bulletins.</p>
+                <a href="#" class="action-link">MEDIA PORTAL</a>
+            </div>
+
+            <div class="dept-card">
+                <span class="dept-name">Innovation</span>
+                <p style="font-size: 0.85rem; color: #888;">Future facility blueprints, turbine efficiency R&D, and new tech.</p>
+                <a href="#" class="action-link">R&D BLUEPRINTS</a>
+            </div>
+
+            <div class="dept-card">
+                <span class="dept-name">Quality Assurance</span>
+                <p style="font-size: 0.85rem; color: #888;">Bug tracking, stress-test data, and system stability reporting.</p>
+                <a href="#" class="action-link">BUG TERMINAL</a>
+            </div>
+        </div>
+
+        <h3 style="font-family: 'Share Tech Mono'; color: var(--primary-red); margin-bottom: 15px;">LIVE SYSTEM FEED</h3>
+        <div class="terminal-feed" id="terminal-log">
+            > SYSTEM READY...<br>
+            > DECRYPTING PERSONNEL FILES...<br>
+            > ACCESS GRANTED TO ADMIN_USER_01...<br>
+        </div>
+
+        <a href="index.html" style="display:block; margin-top: 50px; color: #444; text-decoration: none; font-size: 0.8rem;">LOGOUT AND SECURE TERMINAL</a>
     </main>
 
-    <audio id="sndDeny" src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3"></audio>
-    <audio id="sndGrant" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-
     <script>
-        const input = document.getElementById('passInput');
+        // --- 1. THE MATRIX RAIN EFFECT ---
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()*&^%";
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+
+        for (let x = 0; x < columns; x++) drops[x] = 1;
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#ff4d4d"; // Red rain to match GPS
+            ctx.font = fontSize + "px 'Share Tech Mono'";
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 50);
+
+        // --- 2. LOGIN LOGIC ---
+        const passInput = document.getElementById('passInput');
+        const dashboard = document.getElementById('secure-dashboard');
         const loginScreen = document.getElementById('login-screen');
-        const sndDeny = document.getElementById('sndDeny');
-        const sndGrant = document.getElementById('sndGrant');
+        const errorMsg = document.getElementById('error-msg');
+        
+        // SET YOUR PASSWORD HERE
+        const ACCESS_KEY = "GPS_CLEARANCE";
 
-        // --- EDIT YOUR PASSWORD HERE ---
-        const CORRECT_PASSWORD = "GPS_ADMIN"; 
-
-        input.addEventListener('keypress', function (e) {
+        passInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                if (input.value === CORRECT_PASSWORD) {
-                    // ACCESS GRANTED
-                    sndGrant.play();
+                if (passInput.value === ACCESS_KEY) {
                     document.body.classList.add('access-granted');
-                    input.blur();
-                } else {
-                    // ACCESS DENIED
-                    sndDeny.play();
-                    input.classList.add('error-shake');
-                    input.value = "";
                     setTimeout(() => {
-                        input.classList.remove('error-shake');
-                    }, 400);
+                        loginScreen.style.display = 'none';
+                        dashboard.style.display = 'block';
+                        startTerminalFeed();
+                    }, 1000);
+                } else {
+                    errorMsg.style.display = 'block';
+                    passInput.style.borderColor = 'red';
+                    setTimeout(() => { 
+                        errorMsg.style.display = 'none'; 
+                        passInput.style.borderColor = '#2a2a2a';
+                    }, 2000);
                 }
             }
         });
+
+        // --- 3. LIVE TERMINAL FEED SIMULATION ---
+        function startTerminalFeed() {
+            const feed = document.getElementById('terminal-log');
+            const lines = [
+                "> CONNECTION ESTABLISHED...",
+                "> SYNCING COMPLIANCE DATABASE...",
+                "> ENCRYPTING QA TRAFFIC...",
+                "> INNOVATION PROTOTYPES LOADED.",
+                "> ALERT: NO ANOMALIES DETECTED IN SECTOR 1.",
+                "> COMMUNICATIONS PORTAL STANDING BY..."
+            ];
+            let i = 0;
+            setInterval(() => {
+                if (i < lines.length) {
+                    feed.innerHTML += lines[i] + "<br>";
+                    i++;
+                }
+            }, 1500);
+        }
     </script>
 </body>
 </html>
