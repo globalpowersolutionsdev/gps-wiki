@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS | SECURE TERMINAL</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-red: #ff4d4d;
+            --bg-dark: #0a0a0a;
+            --border-color: #2a2a2a;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            height: 100%;
+            background-color: var(--bg-dark);
+            color: white;
+            font-family: 'Share Tech Mono', monospace; /* Futuristic terminal font */
+            overflow: hidden;
+        }
+
+        /* --- LOGIN OVERLAY --- */
+        #login-screen {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle, #111 0%, #000 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: transform 0.8s cubic-bezier(0.87, 0, 0.13, 1);
+        }
+
+        .login-box {
+            text-align: center;
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        .warning-text {
+            color: var(--primary-red);
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            animation: flicker 2s infinite;
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--primary-red);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.5rem;
+            text-align: center;
+            outline: none;
+            padding: 10px;
+            width: 250px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--primary-red);
+        }
+
+        .hint {
+            margin-top: 15px;
+            font-size: 0.7rem;
+            color: #555;
+        }
+
+        /* --- CLASSIFIED CONTENT (Hidden by default) --- */
+        #secure-content {
+            padding: 60px 10%;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease 0.5s;
+        }
+
+        .classified-header {
+            border-left: 5px solid var(--primary-red);
+            padding-left: 20px;
+            margin-bottom: 40px;
+        }
+
+        .redacted {
+            background: #333;
+            color: #333;
+            padding: 0 5px;
+            cursor: help;
+            transition: background 0.3s;
+        }
+
+        .redacted:hover {
+            background: transparent;
+            color: var(--primary-red);
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+            52% { opacity: 1; }
+            54% { opacity: 0.4; }
+        }
+
+        .access-granted #login-screen {
+            transform: translateY(-100%);
+        }
+
+        .access-granted #secure-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .error-shake {
+            animation: shake 0.4s;
+            border-bottom-color: var(--primary-red) !important;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <div class="warning-text">UNAUTHORIZED ACCESS IS PROHIBITED</div>
+            <h2 style="margin-bottom: 30px; letter-spacing: 5px;">ENTER CLEARANCE CODE</h2>
+            <input type="password" id="passInput" placeholder="********" autocomplete="off">
+            <div class="hint">GPS ENCRYPTION LEVEL 4 ACTIVE</div>
+        </div>
+    </div>
+
+    <main id="secure-content">
+        <div class="classified-header">
+            <h1 style="color: var(--primary-red); margin: 0;">CLASSIFIED DATABASE</h1>
+            <p style="color: #888;">Clearance Level: ADMINISTRATOR</p>
+        </div>
+
+        <section style="max-width: 800px; line-height: 2;">
+            <h2>Project <span class="redacted">OMEGA_STREAM</span></h2>
+            <p>On February 14th, facility engineers detected a <span class="redacted">massive frequency surge</span> in the lower levels of KHPP. 
+            The source was identified as <span class="redacted">REDACTED DATA POINT</span>.</p>
+            
+            <p>Status: <span style="color: var(--primary-red);">CRITICAL</span></p>
+            
+            <div style="margin-top: 50px; border: 1px dashed #333; padding: 20px;">
+                <h3>Administrator Logs</h3>
+                <ul style="list-style: none; padding: 0; color: #aaa; font-size: 0.9rem;">
+                    <li>• Bypass Code for Turbine 2: <code>8842-GPS</code></li>
+                    <li>• Emergency Ventilation: <span class="redacted">Sector 7 Only</span></li>
+                    <li>• Internal Memo: Do not mention the <span class="redacted">void incidents</span> to Junior Staff.</li>
+                </ul>
+            </div>
+
+            <a href="index.html" style="display:inline-block; margin-top: 40px; color: var(--primary-red); text-decoration: none;">← TERMINATE SESSION</a>
+        </section>
+    </main>
+
+    <audio id="sndDeny" src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3"></audio>
+    <audio id="sndGrant" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+
+    <script>
+        const input = document.getElementById('passInput');
+        const loginScreen = document.getElementById('login-screen');
+        const sndDeny = document.getElementById('sndDeny');
+        const sndGrant = document.getElementById('sndGrant');
+
+        // --- EDIT YOUR PASSWORD HERE ---
+        const CORRECT_PASSWORD = "GPS_ADMIN"; 
+
+        input.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                if (input.value === CORRECT_PASSWORD) {
+                    // ACCESS GRANTED
+                    sndGrant.play();
+                    document.body.classList.add('access-granted');
+                    input.blur();
+                } else {
+                    // ACCESS DENIED
+                    sndDeny.play();
+                    input.classList.add('error-shake');
+                    input.value = "";
+                    setTimeout(() => {
+                        input.classList.remove('error-shake');
+                    }, 400);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
