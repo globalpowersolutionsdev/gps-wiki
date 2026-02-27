@@ -3,134 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS Official Wiki | Terminal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>GPS | SECURE PERSONNEL TERMINAL</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --primary-red: #ff4d4d;
-            --bg-dark: #161616; 
-            --card-bg: #1e1e1e;
-            --text-main: #ffffff;
-            --text-dim: #888888;
+            --bg-dark: #070707;
+            --panel-bg: rgba(15, 15, 15, 0.95);
+            --accent-glow: rgba(255, 77, 77, 0.4);
             --border-color: #2a2a2a;
         }
 
-        body.night-mode {
-            --bg-dark: #0a0a0a; 
-            --card-bg: #111111;
-        }
-
-        body {
+        body, html {
             margin: 0; padding: 0;
-            font-family: 'Inter', sans-serif;
+            height: 100%;
             background-color: var(--bg-dark);
-            color: var(--text-main);
-            overflow-x: hidden;
-            transition: background-color 1s ease;
-        }
-
-        /* --- STARTUP ANIMATION --- */
-        #startup-layer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9999; display: flex;
-            justify-content: center; align-items: center;
-            transition: opacity 1s ease, visibility 1s;
-        }
-        .startup-content { text-align: center; width: 320px; }
-        .os-logo { font-weight: 700; font-size: 1.2rem; letter-spacing: 6px; color: #fff; margin-bottom: 20px; }
-        .os-logo span { color: var(--primary-red); }
-        .loader-bar { width: 100%; height: 2px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
-        .loader-progress { width: 0%; height: 100%; background: var(--primary-red); animation: loadProgress 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        @keyframes loadProgress { to { width: 100%; } }
-        .loader-hidden { opacity: 0 !important; visibility: hidden !important; }
-
-        /* --- HERO & DYNAMIC BG --- */
-        .hero {
-            position: relative;
-            padding: 140px 10%;
+            color: white;
+            font-family: 'Inter', sans-serif;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            border-bottom: 1px solid var(--border-color);
-        }
-        #hero-bg {
-            position: absolute; top: -10%; left: -10%; width: 120%; height: 120%;
-            background: linear-gradient(rgba(10,10,10,0.75), rgba(10,10,10,0.95)), 
-                        url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1600');
-            background-size: cover; z-index: -1;
         }
 
-        /* --- STATUS PILLS --- */
-        .status-container { display: flex; gap: 15px; margin-top: 25px; }
-        .status-pill {
-            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color);
-            padding: 6px 14px; border-radius: 50px; font-size: 0.7rem; font-weight: 600;
-            display: flex; align-items: center; gap: 8px;
+        /* --- MATRIX CANVAS BACKGROUND --- */
+        #matrix-canvas {
+            position: fixed; top: 0; left: 0; z-index: 1;
+            opacity: 0.15; pointer-events: none;
         }
-        .dot { width: 6px; height: 6px; border-radius: 50%; }
-        .online { background: #2ecc71; box-shadow: 0 0 8px #2ecc71; }
 
-        /* --- WIKI GRID --- */
-        .main-content { padding: 80px 10%; max-width: 1400px; margin: 0 auto; }
-        .wiki-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 35px; }
-        .wiki-card {
-            background: var(--card-bg); border-radius: 16px; overflow: hidden;
-            border: 1px solid var(--border-color); text-decoration: none;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: block;
+        /* --- BEAUTIFUL SECURE LOGIN --- */
+        #login-screen {
+            position: fixed; inset: 0;
+            background: radial-gradient(circle at center, #1a0505 0%, #000 100%);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000;
+            transition: all 1s cubic-bezier(0.85, 0, 0.15, 1);
         }
-        .wiki-card:hover { transform: translateY(-12px); border-color: var(--primary-red); }
-        .card-img { height: 200px; background-size: cover; background-position: center; border-bottom: 1px solid var(--border-color); }
-        .card-body { padding: 25px; }
+
+        .login-box {
+            position: relative; z-index: 1001; text-align: center;
+            padding: 60px; border: 1px solid var(--primary-red);
+            background: rgba(0,0,0,0.95);
+            box-shadow: 0 0 60px rgba(255, 77, 77, 0.15);
+            width: 400px;
+        }
+
+        /* The Biometric Eye Scanner */
+        .biometric-scanner {
+            width: 80px; height: 80px; margin: 0 auto 30px;
+            border: 2px solid var(--primary-red); border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            position: relative; box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .biometric-scanner::after {
+            content: ""; width: 40px; height: 2px;
+            background: var(--primary-red); position: absolute;
+            animation: scanLine 2s infinite ease-in-out;
+            box-shadow: 0 0 10px var(--primary-red);
+        }
+
+        @keyframes scanLine {
+            0%, 100% { transform: translateY(-30px); opacity: 0; }
+            50% { transform: translateY(30px); opacity: 1; }
+        }
+
+        .login-box h2 {
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 8px; color: var(--primary-red);
+            margin-bottom: 25px; text-transform: uppercase;
+        }
+
+        #passInput {
+            background: transparent; border: 1px solid var(--border-color);
+            padding: 15px; color: var(--primary-red);
+            font-family: 'Share Tech Mono', monospace; font-size: 1.2rem;
+            text-align: center; width: 100%; outline: none;
+            margin-bottom: 25px; box-sizing: border-box;
+        }
+
+        .verify-btn {
+            width: 100%; padding: 15px; background: transparent;
+            color: var(--primary-red); border: 1px solid var(--primary-red);
+            font-family: 'Share Tech Mono', monospace; font-weight: bold;
+            cursor: pointer; letter-spacing: 3px; transition: all 0.4s;
+        }
+
+        .verify-btn:hover { background: var(--primary-red); color: black; box-shadow: 0 0 25px var(--primary-red); }
+
+        /* --- DASHBOARD CONTENT --- */
+        #secure-dashboard {
+            position: relative; z-index: 10;
+            padding: 60px 8%; display: none;
+            animation: bootIn 1s ease forwards;
+        }
+
+        @keyframes bootIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .header-main { border-bottom: 2px solid var(--primary-red); padding-bottom: 20px; margin-bottom: 40px; }
+        .header-main h1 { font-family: 'Share Tech Mono', monospace; letter-spacing: 4px; color: var(--primary-red); margin: 0; }
+
+        /* --- DEPARTMENT CARDS --- */
+        .dept-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px; margin-bottom: 40px;
+        }
+
+        .dept-card {
+            background: var(--panel-bg); border: 1px solid var(--border-color);
+            padding: 30px; transition: 0.4s; backdrop-filter: blur(10px);
+            position: relative; overflow: hidden;
+        }
+
+        .dept-card:hover { border-color: var(--primary-red); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-5px); }
+
+        .dept-name { color: var(--primary-red); font-family: 'Share Tech Mono'; font-weight: bold; display: block; margin-bottom: 10px; }
+
+        .terminal-feed {
+            background: #000; border: 1px solid #1a1a1a;
+            padding: 20px; font-family: 'Share Tech Mono', monospace;
+            color: #00ff00; font-size: 0.85rem;
+            height: 200px; overflow-y: auto; border-radius: 4px;
+        }
+
+        .terminate-link {
+            display: inline-block; margin-top: 40px; color: #444;
+            text-decoration: none; font-family: 'Share Tech Mono'; cursor: pointer;
+        }
+        .terminate-link:hover { color: var(--primary-red); }
+
+        .access-granted-fade { opacity: 0; transform: scale(1.1); pointer-events: none; }
     </style>
 </head>
 <body>
 
-    <div id="startup-layer">
-        <div class="startup-content">
-            <div class="os-logo">GPS<span>_TERMINAL</span></div>
-            <div class="loader-bar"><div class="loader-progress"></div></div>
-            <div style="font-family:monospace; font-size:0.6rem; color:var(--primary-red);">INITIALIZING...</div>
+    <canvas id="matrix-canvas"></canvas>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <div class="biometric-scanner">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ff4d4d" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </div>
+            <h2>ACCESS REQUIRED</h2>
+            <input type="password" id="passInput" placeholder="CLEARANCE CODE">
+            <button class="verify-btn" onclick="checkClearance()">VERIFY BIOMETRICS</button>
+            <p id="error-msg" style="color:var(--primary-red); font-size: 10px; margin-top: 15px; display: none;">UNAUTHORIZED ACCESS DETECTED</p>
         </div>
     </div>
 
-    <header class="hero">
-        <div id="hero-bg"></div>
-        <h1 style="color:var(--primary-red); font-size:3.5rem; margin:0;">GPS Official Wiki</h1>
-        <div class="status-container">
-            <div class="status-pill"><div class="dot online"></div> KHPP: ACTIVE</div>
-            <div class="status-pill"><div class="dot online"></div> GRID: STABLE</div>
-        </div>
-    </header>
+    <main id="secure-dashboard">
+        <header class="header-main">
+            <div style="font-size: 0.7rem; color: #666; letter-spacing: 4px;">INTERNAL PERSONNEL NETWORK</div>
+            <h1>ADMINISTRATIVE HUB</h1>
+        </header>
 
-    <main class="main-content">
-        <div class="wiki-grid">
-            <a href="khpphome.html" class="wiki-card">
-                <div class="card-img" style="background-image: url('https://via.placeholder.com/500x300/222/888?text=KHPP')"></div>
-                <div class="card-body"><h4>Klinton Hydroelectric</h4></div>
-            </a>
-            <a href="secure.html" class="wiki-card">
-                <div class="card-img" style="background-image: url('https://via.placeholder.com/500x300/222/888?text=SECURE')"></div>
-                <div class="card-body"><h4>Personnel Terminal</h4></div>
-            </a>
+        <div class="dept-grid">
+            <div class="dept-card"><span class="dept-name">Administration</span><p style="font-size: 0.8rem; color: #888;">Executive oversight and global facility permissions.</p></div>
+            <div class="dept-card"><span class="dept-name">Compliance</span><p style="font-size: 0.8rem; color: #888;">Audit safety protocols and rule enforcement data.</p></div>
+            <div class="dept-card"><span class="dept-name">Communications</span><p style="font-size: 0.8rem; color: #888;">Centralize bulletins and internal staff memos.</p></div>
+            <div class="dept-card"><span class="dept-name">Innovation</span><p style="font-size: 0.8rem; color: #888;">Research future grid infrastructure and blueprints.</p></div>
+            <div class="dept-card"><span class="dept-name">QA Dept</span><p style="font-size: 0.8rem; color: #888;">Bug verification and system stability reporting.</p></div>
         </div>
+
+        <div style="font-family: 'Share Tech Mono'; color: #444; font-size: 0.7rem; margin-bottom: 10px;">> LIVE SYSTEM MONITOR</div>
+        <div class="terminal-feed" id="terminal-log">> STANDBY...<br></div>
+
+        <a class="terminate-link" onclick="runTerminate()">[ TERMINATE_SESSION_OVERRIDE ]</a>
     </main>
 
-    <script>
-        // Start Logic
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('startup-layer').classList.add('loader-hidden');
-            }, 2500);
-        });
+    <audio id="sndDeny" src="denied.mp3"></audio>
+    <audio id="sndGrant" src="granted.mp3"></audio>
+    <audio id="sndType" src="terminal_type.mp3"></audio>
+    <audio id="sndWipe" src="wipe.mp3"></audio>
+    <audio id="sndShutdown" src="shutdown.mp3"></audio>
 
-        // Mouse Move BG
-        const bg = document.getElementById('hero-bg');
-        window.addEventListener('mousemove', (e) => {
-            const moveX = (window.innerWidth / 2 - e.pageX) / 45;
-            const moveY = (window.innerHeight / 2 - e.pageY) / 45;
-            bg.style.transform = `translate(${moveX}px, ${moveY}px)`;
-        });
+    <script>
+        /* --- 1. MATRIX RAIN --- */
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const characters = "010101"; 
+        const fontSize = 14; const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#ff4d4d"; ctx.font = fontSize + "px 'Share Tech Mono'";
+            drops.forEach((y, i) => {
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                ctx.fillText(text, i * fontSize, y * fontSize);
+                if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            });
+        }
+        setInterval(drawMatrix, 50);
+
+        /* --- 2. LOGIN LOGIC --- */
+        function checkClearance() {
+            const input = document.getElementById('passInput');
+            if (input.value.toUpperCase() === "GPS2026") {
+                document.getElementById('sndGrant').play().catch(e=>{});
+                document.getElementById('login-screen').classList.add('access-granted-fade');
+                setTimeout(() => {
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('secure-dashboard').style.display = 'block';
+                    logToTerminal("> AUTHENTICATION SUCCESSFUL.<br>> WELCOME ADMIN.");
+                }, 1000);
+            } else {
+                document.getElementById('sndDeny').play().catch(e=>{});
+                input.style.borderColor = "red";
+                setTimeout(() => { input.style.borderColor = "#2a2a2a"; input.value = ""; }, 500);
+            }
+        }
+
+        /* --- 3. TERMINAL UTILS --- */
+        function logToTerminal(msg) {
+            const feed = document.getElementById('terminal-log');
+            feed.innerHTML += msg + "<br>";
+            feed.scrollTop = feed.scrollHeight;
+            document.getElementById('sndType').currentTime = 0;
+            document.getElementById('sndType').play().catch(e=>{});
+        }
+
+        /* --- 4. ASYNC TERMINATE SEQUENCE --- */
+        async function runTerminate() {
+            document.getElementById('sndWipe').play().catch(e=>{});
+            const steps = [
+                "> [!] TERMINATION REQUESTED...",
+                "> SCRUBBING PERSONNEL FILES...",
+                "> PURGING SESSION KEYS...",
+                "> DISCONNECTED."
+            ];
+
+            for (let line of steps) {
+                logToTerminal("<span style='color:red;'>" + line + "</span>");
+                await new Promise(r => setTimeout(r, 600)); // The wait logic
+            }
+
+            document.getElementById('sndShutdown').play().catch(e=>{});
+            setTimeout(() => { window.location.href = "index.html"; }, 1500);
+        }
     </script>
 </body>
 </html>
