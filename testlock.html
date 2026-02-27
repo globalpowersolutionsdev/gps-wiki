@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GPS | SECURE PERSONNEL TERMINAL</title>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --primary-red: #ff4d4d;
             --bg-dark: #070707;
-            --panel-bg: rgba(15, 15, 15, 0.95);
+            --panel-bg: rgba(15, 15, 15, 0.9);
             --accent-glow: rgba(255, 77, 77, 0.4);
             --border-color: #2a2a2a;
         }
@@ -25,114 +25,128 @@
             overflow: hidden;
         }
 
-        /* --- MATRIX CANVAS BACKGROUND --- */
+
         #matrix-canvas {
-            position: fixed; top: 0; left: 0; z-index: 1;
-            opacity: 0.15; pointer-events: none;
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 1;
+            opacity: 0.15;
+            pointer-events: none;
         }
 
-        /* --- BEAUTIFUL SECURE LOGIN --- */
+        /* --- LOGIN SCREEN --- */
         #login-screen {
-            position: fixed; inset: 0;
+            position: fixed;
+            inset: 0;
             background: radial-gradient(circle at center, #1a0505 0%, #000 100%);
-            display: flex; justify-content: center; align-items: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             z-index: 1000;
-            transition: all 1s cubic-bezier(0.85, 0, 0.15, 1);
+            transition: all 1s ease;
+
         }
 
         .login-box {
-            position: relative; z-index: 1001; text-align: center;
-            padding: 60px; border: 1px solid var(--primary-red);
+
+
+
+
+            text-align: center;
+            padding: 60px;
+            border: 1px solid var(--primary-red);
             background: rgba(0,0,0,0.95);
-            box-shadow: 0 0 60px rgba(255, 77, 77, 0.15);
-            width: 400px;
+            box-shadow: 0 0 40px var(--accent-glow);
+            width: 380px;
         }
 
-        /* The Biometric Eye Scanner */
         .biometric-scanner {
-            width: 80px; height: 80px; margin: 0 auto 30px;
-            border: 2px solid var(--primary-red); border-radius: 50%;
+            width: 70px; height: 70px;
+            margin: 0 auto 25px;
+            border: 2px solid var(--primary-red);
+
+            border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            position: relative; box-shadow: 0 0 20px var(--accent-glow);
+            position: relative;
+
         }
 
         .biometric-scanner::after {
             content: ""; width: 40px; height: 2px;
-            background: var(--primary-red); position: absolute;
+            background: var(--primary-red);
+            position: absolute;
             animation: scanLine 2s infinite ease-in-out;
-            box-shadow: 0 0 10px var(--primary-red);
+
+
+
         }
 
-        @keyframes scanLine {
-            0%, 100% { transform: translateY(-30px); opacity: 0; }
-            50% { transform: translateY(30px); opacity: 1; }
-        }
+        @keyframes scanLine { 0%, 100% { transform: translateY(-20px); } 50% { transform: translateY(20px); } }
 
-        .login-box h2 {
-            font-family: 'Share Tech Mono', monospace;
-            letter-spacing: 8px; color: var(--primary-red);
-            margin-bottom: 25px; text-transform: uppercase;
-        }
+
+
 
         #passInput {
             background: transparent; border: 1px solid var(--border-color);
             padding: 15px; color: var(--primary-red);
-            font-family: 'Share Tech Mono', monospace; font-size: 1.2rem;
-            text-align: center; width: 100%; outline: none;
-            margin-bottom: 25px; box-sizing: border-box;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.2rem; text-align: center; width: 100%;
+            outline: none; margin-bottom: 20px;
+
+
+
+
+
+
         }
 
         .verify-btn {
-            width: 100%; padding: 15px; background: transparent;
-            color: var(--primary-red); border: 1px solid var(--primary-red);
-            font-family: 'Share Tech Mono', monospace; font-weight: bold;
-            cursor: pointer; letter-spacing: 3px; transition: all 0.4s;
+            width: 100%; padding: 12px;
+            background: transparent; color: var(--primary-red);
+            border: 1px solid var(--primary-red);
+            font-family: 'Share Tech Mono', monospace;
+            font-weight: bold; cursor: pointer;
+
+
+
+
+            transition: 0.3s;
         }
 
-        .verify-btn:hover { background: var(--primary-red); color: black; box-shadow: 0 0 25px var(--primary-red); }
+        .verify-btn:hover { background: var(--primary-red); color: black; box-shadow: 0 0 20px var(--primary-red); }
 
-        /* --- DASHBOARD CONTENT --- */
+        /* --- DASHBOARD --- */
         #secure-dashboard {
             position: relative; z-index: 10;
-            padding: 60px 8%; display: none;
-            animation: bootIn 1s ease forwards;
+            padding: 60px 10%; display: none;
+
+
         }
-
-        @keyframes bootIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        .header-main { border-bottom: 2px solid var(--primary-red); padding-bottom: 20px; margin-bottom: 40px; }
-        .header-main h1 { font-family: 'Share Tech Mono', monospace; letter-spacing: 4px; color: var(--primary-red); margin: 0; }
-
-        /* --- DEPARTMENT CARDS --- */
-        .dept-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px; margin-bottom: 40px;
-        }
-
-        .dept-card {
-            background: var(--panel-bg); border: 1px solid var(--border-color);
-            padding: 30px; transition: 0.4s; backdrop-filter: blur(10px);
-            position: relative; overflow: hidden;
-        }
-
-        .dept-card:hover { border-color: var(--primary-red); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-5px); }
-
-        .dept-name { color: var(--primary-red); font-family: 'Share Tech Mono'; font-weight: bold; display: block; margin-bottom: 10px; }
 
         .terminal-feed {
-            background: #000; border: 1px solid #1a1a1a;
+            background: #000; border: 1px solid #222;
             padding: 20px; font-family: 'Share Tech Mono', monospace;
-            color: #00ff00; font-size: 0.85rem;
-            height: 200px; overflow-y: auto; border-radius: 4px;
+            color: #00ff00; font-size: 0.8rem;
+            height: 250px; overflow-y: auto; border-radius: 4px;
+            margin-top: 30px;
+
+
+
         }
 
-        .terminate-link {
-            display: inline-block; margin-top: 40px; color: #444;
-            text-decoration: none; font-family: 'Share Tech Mono'; cursor: pointer;
-        }
-        .terminate-link:hover { color: var(--primary-red); }
+        .terminate-btn {
+            display: inline-block; margin-top: 30px;
+            color: #555; text-decoration: none;
+            font-family: 'Share Tech Mono', monospace;
+            cursor: pointer;
 
-        .access-granted-fade { opacity: 0; transform: scale(1.1); pointer-events: none; }
+        }
+
+        .terminate-btn:hover { color: var(--primary-red); }
+
+        .error-shake { animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        .fade-out { opacity: 0; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -142,48 +156,40 @@
     <div id="login-screen">
         <div class="login-box">
             <div class="biometric-scanner">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ff4d4d" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ff4d4d" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             </div>
-            <h2>ACCESS REQUIRED</h2>
-            <input type="password" id="passInput" placeholder="CLEARANCE CODE">
+            <h2 style="font-family:'Share Tech Mono'; letter-spacing:5px;">CLEARANCE REQUIRED</h2>
+            <input type="password" id="passInput" placeholder="ENTER ID">
             <button class="verify-btn" onclick="checkClearance()">VERIFY BIOMETRICS</button>
-            <p id="error-msg" style="color:var(--primary-red); font-size: 10px; margin-top: 15px; display: none;">UNAUTHORIZED ACCESS DETECTED</p>
+
         </div>
     </div>
 
     <main id="secure-dashboard">
-        <header class="header-main">
-            <div style="font-size: 0.7rem; color: #666; letter-spacing: 4px;">INTERNAL PERSONNEL NETWORK</div>
-            <h1>ADMINISTRATIVE HUB</h1>
-        </header>
-
-        <div class="dept-grid">
-            <div class="dept-card"><span class="dept-name">Administration</span><p style="font-size: 0.8rem; color: #888;">Executive oversight and global facility permissions.</p></div>
-            <div class="dept-card"><span class="dept-name">Compliance</span><p style="font-size: 0.8rem; color: #888;">Audit safety protocols and rule enforcement data.</p></div>
-            <div class="dept-card"><span class="dept-name">Communications</span><p style="font-size: 0.8rem; color: #888;">Centralize bulletins and internal staff memos.</p></div>
-            <div class="dept-card"><span class="dept-name">Innovation</span><p style="font-size: 0.8rem; color: #888;">Research future grid infrastructure and blueprints.</p></div>
-            <div class="dept-card"><span class="dept-name">QA Dept</span><p style="font-size: 0.8rem; color: #888;">Bug verification and system stability reporting.</p></div>
+        <h1 style="font-family:'Share Tech Mono'; color:var(--primary-red);">GPS SECURE TERMINAL</h1>
+        
+        <div class="terminal-feed" id="terminal-log">
+            > STANDBY FOR COMMAND...<br>
         </div>
 
-        <div style="font-family: 'Share Tech Mono'; color: #444; font-size: 0.7rem; margin-bottom: 10px;">> LIVE SYSTEM MONITOR</div>
-        <div class="terminal-feed" id="terminal-log">> STANDBY...<br></div>
-
-        <a class="terminate-link" onclick="runTerminate()">[ TERMINATE_SESSION_OVERRIDE ]</a>
+        <a class="terminate-btn" onclick="terminateSession()">[ TERMINATE_SESSION_OVERRIDE ]</a>
     </main>
 
     <audio id="sndDeny" src="denied.mp3"></audio>
     <audio id="sndGrant" src="granted.mp3"></audio>
+
     <audio id="sndType" src="terminal_type.mp3"></audio>
     <audio id="sndWipe" src="wipe.mp3"></audio>
     <audio id="sndShutdown" src="shutdown.mp3"></audio>
 
     <script>
-        /* --- 1. MATRIX RAIN --- */
+        /* --- 1. MATRIX EFFECT --- */
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const characters = "010101"; 
-        const fontSize = 14; const columns = canvas.width / fontSize;
+        const characters = "01010101";
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
 
         function drawMatrix() {
@@ -201,18 +207,20 @@
         /* --- 2. LOGIN LOGIC --- */
         function checkClearance() {
             const input = document.getElementById('passInput');
-            if (input.value.toUpperCase() === "GPS2026") {
-                document.getElementById('sndGrant').play().catch(e=>{});
-                document.getElementById('login-screen').classList.add('access-granted-fade');
+            const code = input.value.toUpperCase();
+            
+            if (code === "GPS2026") {
+                document.getElementById('sndGrant').play().catch(e => {});
+                document.getElementById('login-screen').classList.add('fade-out');
                 setTimeout(() => {
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('secure-dashboard').style.display = 'block';
-                    logToTerminal("> AUTHENTICATION SUCCESSFUL.<br>> WELCOME ADMIN.");
+                    logToTerminal("> AUTHENTICATION SUCCESSFUL.<br>> CLEARANCE LEVEL 4 RECOGNIZED.<br>> ENCRYPTING CONNECTION...");
                 }, 1000);
             } else {
-                document.getElementById('sndDeny').play().catch(e=>{});
-                input.style.borderColor = "red";
-                setTimeout(() => { input.style.borderColor = "#2a2a2a"; input.value = ""; }, 500);
+                document.getElementById('sndDeny').play().catch(e => {});
+                input.classList.add('error-shake');
+                setTimeout(() => { input.classList.remove('error-shake'); input.value = ""; }, 500);
             }
         }
 
@@ -222,26 +230,39 @@
             feed.innerHTML += msg + "<br>";
             feed.scrollTop = feed.scrollHeight;
             document.getElementById('sndType').currentTime = 0;
-            document.getElementById('sndType').play().catch(e=>{});
+            document.getElementById('sndType').play().catch(e => {});
         }
 
-        /* --- 4. ASYNC TERMINATE SEQUENCE --- */
-        async function runTerminate() {
-            document.getElementById('sndWipe').play().catch(e=>{});
+        /* --- 4. THE TERMINATE SEQUENCE --- */
+        function terminateSession() {
+            // First, play the wipe sound
+            document.getElementById('sndWipe').play().catch(e => {});
+            
             const steps = [
                 "> [!] TERMINATION REQUESTED...",
-                "> SCRUBBING PERSONNEL FILES...",
+                "> SCRUBBING PERSONNEL DATA...",
                 "> PURGING SESSION KEYS...",
+                "> WIPING TEMPORARY CACHE...",
+                "> OVERWRITING SECTORS 0-255...",
+                "> SHUTTING DOWN CORE NODES...",
                 "> DISCONNECTED."
             ];
 
-            for (let line of steps) {
-                logToTerminal("<span style='color:red;'>" + line + "</span>");
-                await new Promise(r => setTimeout(r, 600)); // The wait logic
-            }
-
-            document.getElementById('sndShutdown').play().catch(e=>{});
-            setTimeout(() => { window.location.href = "index.html"; }, 1500);
+            let i = 0;
+            const sequence = setInterval(() => {
+                if (i < steps.length) {
+                    logToTerminal("<span style='color:red;'>" + steps[i] + "</span>");
+                    i++;
+                } else {
+                    clearInterval(sequence);
+                    // Play the final shutdown sound
+                    document.getElementById('sndShutdown').play().catch(e => {});
+                    // WAIT 2 seconds so the user can see "Disconnected" before leaving
+                    setTimeout(() => {
+                        window.location.href = "index.html";
+                    }, 2000); 
+                }
+            }, 600); // Speed of the text appearing
         }
     </script>
 </body>
