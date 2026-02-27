@@ -239,83 +239,97 @@
     </main>
 
     <script>
-        // --- 1. THE MATRIX RAIN EFFECT ---
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
+    // --- 1. THE MATRIX RAIN EFFECT (Keep this part as is) ---
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = [];
+    for (let x = 0; x < columns; x++) drops[x] = 1;
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+    function drawMatrix() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#ff4d4d";
+        ctx.font = fontSize + "px 'Share Tech Mono'";
+        for (let i = 0; i < drops.length; i++) {
+            const text = characters.charAt(Math.floor(Math.random() * characters.length));
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        }
+    }
+    setInterval(drawMatrix, 50);
 
-        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()*&^%";
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const drops = [];
+    // --- 2. IMPROVED LOGIN LOGIC ---
+    const passInput = document.getElementById('passInput');
+    const dashboard = document.getElementById('secure-dashboard');
+    const loginScreen = document.getElementById('login-screen');
+    const errorMsg = document.getElementById('error-msg');
+    
+    // The Password (I've made the check ignore Capital Letters now)
+    const ACCESS_KEY = "GPS_CLEARANCE"; 
 
-        for (let x = 0; x < columns; x++) drops[x] = 1;
+    passInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            // .toUpperCase() makes it so 'gps_clearance' works too!
+            if (passInput.value.toUpperCase() === ACCESS_KEY) {
+                
+                // Visual feedback that it worked
+                passInput.style.borderColor = "#00ff00";
+                passInput.value = "ACCESS GRANTED";
+                
+                // Play sound if you have it
+                const sndGrant = document.getElementById('sndGrant');
+                if(sndGrant) sndGrant.play().catch(e => {});
 
-        function drawMatrix() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#ff4d4d"; // Red rain to match GPS
-            ctx.font = fontSize + "px 'Share Tech Mono'";
+                document.body.classList.add('access-granted');
+                
+                setTimeout(() => {
+                    loginScreen.style.display = 'none';
+                    dashboard.style.display = 'block';
+                    startTerminalFeed();
+                }, 1000);
 
-            for (let i = 0; i < drops.length; i++) {
-                const text = characters.charAt(Math.floor(Math.random() * characters.length));
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
+            } else {
+                // Wrong Password Logic
+                const sndDeny = document.getElementById('sndDeny');
+                if(sndDeny) sndDeny.play().catch(e => {});
+                
+                errorMsg.style.display = 'block';
+                passInput.classList.add('error-shake');
+                
+                setTimeout(() => { 
+                    errorMsg.style.display = 'none'; 
+                    passInput.classList.remove('error-shake');
+                    passInput.value = ""; // Clear the box for a retry
+                }, 1000);
             }
         }
-        setInterval(drawMatrix, 50);
+    });
 
-        // --- 2. LOGIN LOGIC ---
-        const passInput = document.getElementById('passInput');
-        const dashboard = document.getElementById('secure-dashboard');
-        const loginScreen = document.getElementById('login-screen');
-        const errorMsg = document.getElementById('error-msg');
-        
-        // SET YOUR PASSWORD HERE
-        const ACCESS_KEY = "GPS_CLEARANCE";
-
-        passInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                if (passInput.value === ACCESS_KEY) {
-                    document.body.classList.add('access-granted');
-                    setTimeout(() => {
-                        loginScreen.style.display = 'none';
-                        dashboard.style.display = 'block';
-                        startTerminalFeed();
-                    }, 1000);
-                } else {
-                    errorMsg.style.display = 'block';
-                    passInput.style.borderColor = 'red';
-                    setTimeout(() => { 
-                        errorMsg.style.display = 'none'; 
-                        passInput.style.borderColor = '#2a2a2a';
-                    }, 2000);
-                }
+    // --- 3. TERMINAL FEED ---
+    function startTerminalFeed() {
+        const feed = document.getElementById('terminal-log');
+        const lines = [
+            "> INITIALIZING SECURE BYPASS...",
+            "> DECRYPTING DEPT_ADMIN_CHANNELS...",
+            "> UPLOADING CLEARANCE LEVEL 5...",
+            "> WELCOME TO THE INNER CIRCLE."
+        ];
+        let i = 0;
+        let interval = setInterval(() => {
+            if (i < lines.length) {
+                feed.innerHTML += lines[i] + "<br>";
+                i++;
+            } else {
+                clearInterval(interval);
             }
-        });
-
-        // --- 3. LIVE TERMINAL FEED SIMULATION ---
-        function startTerminalFeed() {
-            const feed = document.getElementById('terminal-log');
-            const lines = [
-                "> CONNECTION ESTABLISHED...",
-                "> SYNCING COMPLIANCE DATABASE...",
-                "> ENCRYPTING QA TRAFFIC...",
-                "> INNOVATION PROTOTYPES LOADED.",
-                "> ALERT: NO ANOMALIES DETECTED IN SECTOR 1.",
-                "> COMMUNICATIONS PORTAL STANDING BY..."
-            ];
-            let i = 0;
-            setInterval(() => {
-                if (i < lines.length) {
-                    feed.innerHTML += lines[i] + "<br>";
-                    i++;
-                }
-            }, 1500);
-        }
-    </script>
+        }, 1200);
+    }
+</script>
 </body>
 </html>
