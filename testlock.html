@@ -234,6 +234,7 @@
 
     <script>
     /* --- 1. CODE REGISTRY --- */
+    // Define the valid 6-digit codes (formatted as XXX-XXX)
     const VALID_CODES = {
         "ADM": ["111-222"],
         "CMP": ["444-555"],
@@ -268,22 +269,23 @@
     const ghostDisplay = document.getElementById('ghostDisplay');
 
     realInput.addEventListener('keydown', (e) => {
-        // Prevent deleting the dash if the cursor is right after it
-        if (e.key === "Backspace" && realInput.value.length === 5) {
-            // If they backspace at "000-", we strip the dash too
+        // Stop user from backspacing into the dash at index 3
+        // If they are at position 5 (e.g., "000-1"), backspace should just work.
+        // If they are at position 4 (e.g., "000-"), backspace jumps back to position 3.
+        if (e.key === "Backspace" && realInput.value.length === 4) {
             realInput.value = realInput.value.substring(0, 3);
             e.preventDefault();
         }
     });
 
     realInput.addEventListener('input', (e) => {
-        // 1. Strip everything that isn't a number
+        // 1. Strip everything except numbers
         let raw = realInput.value.replace(/[^0-9]/g, '');
         
-        // 2. Limit to 6 digits
+        // 2. Limit strictly to 6 digits
         if (raw.length > 6) raw = raw.substring(0, 6);
 
-        // 3. Force the Dash into the string
+        // 3. Re-build the string with the forced Dash
         let formatted = "";
         if (raw.length > 3) {
             formatted = raw.substring(0, 3) + "-" + raw.substring(3);
@@ -293,15 +295,17 @@
 
         realInput.value = formatted;
 
-        // 4. Update Ghost Text (QA-XXX-XXX)
-        // We calculate how many characters the user has "filled"
-        let ghostTemplate = currentActivePrefix + "-XXX-XXX";
-        let userString = currentActivePrefix + "-" + formatted;
+        // 4. Update the Ghost Text (QA-XXX-XXX)
+        // This ensures X's only disappear where numbers are typed
+        let prefixPart = currentActivePrefix + "-";
+        let ghostTemplate = "XXX-XXX";
+        let userInput = formatted;
         
-        let finalGhost = "";
+        let finalGhost = prefixPart;
         for (let i = 0; i < ghostTemplate.length; i++) {
-            // If the user has typed a character at this position, show a space in the ghost layer
-            if (userString[i]) {
+            // If the user has typed a character at this position in the 'formatted' string,
+            // we put a space in the ghost layer so the number shows through.
+            if (userInput[i]) {
                 finalGhost += " "; 
             } else {
                 finalGhost += ghostTemplate[i];
@@ -310,7 +314,7 @@
         ghostDisplay.innerText = finalGhost;
     });
 
-    /* --- 4. SYSTEM NAVIGATION --- */
+    /* --- 4. TERMINAL & SYSTEM LOGIC --- */
     function checkClearance() {
         const input = document.getElementById('passInput');
         if (input.value.toUpperCase() === "GPS2026") {
@@ -334,6 +338,7 @@
         currentActivePrefix = prefix;
         document.getElementById('modal-title').innerText = name + " ACCESS";
         
+        // Clear input and reset ghost to the default e.g., QA-XXX-XXX
         realInput.value = "";
         ghostDisplay.innerText = prefix + "-XXX-XXX";
         
@@ -354,7 +359,6 @@
             document.getElementById('sndGrant').play().catch(e=>{});
             logToTerminal(`> CLEARANCE VALIDATED: ${currentActivePrefix}-${val}`);
             setTimeout(() => { 
-                // Redirect to the hub (e.g., qa_hub.html)
                 window.location.href = currentActivePrefix.toLowerCase() + "_hub.html"; 
             }, 1200);
         } else {
