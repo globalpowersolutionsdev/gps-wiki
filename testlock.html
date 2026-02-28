@@ -255,7 +255,7 @@
         }
         setInterval(drawMatrix, 50);
 
-        /* --- 2. LOGIN LOGIC --- */
+        /* --- 2. LOGIN LOGIC (STAGGERED FOR SYNC) --- */
         function checkClearance() {
             const input = document.getElementById('passInput');
             const code = input.value.toUpperCase();
@@ -268,11 +268,11 @@
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('secure-dashboard').style.display = 'block';
                     
-                    // STARTUP SEQUENCE WITH SYNCED SOUND
-                    // We stagger these so they type one after another
-                    setTimeout(() => logToTerminal("> AUTHENTICATION SUCCESSFUL."), 200);
-                    setTimeout(() => logToTerminal("> CLEARANCE LEVEL 4 RECOGNIZED."), 1200);
-                    setTimeout(() => logToTerminal("> ENCRYPTING CONNECTION..."), 2500);
+                    // We use longer timeouts here so the typewriter 
+                    // has time to finish one line before the next starts.
+                    logToTerminal("> AUTHENTICATION SUCCESSFUL.");
+                    setTimeout(() => logToTerminal("> CLEARANCE LEVEL 4 RECOGNIZED."), 1500);
+                    setTimeout(() => logToTerminal("> ENCRYPTING CONNECTION..."), 3500);
                 }, 1000);
             } else {
                 document.getElementById('sndDeny').play().catch(e => {});
@@ -280,8 +280,8 @@
                 setTimeout(() => { input.classList.remove('error-shake'); input.value = ""; }, 500);
             }
         }
-
-        /* --- 3. THE SYNCED TYPEWRITER LOGIC --- */
+        
+        /* --- 3. THE INSTANT-SYNC TYPEWRITER --- */
         function logToTerminal(msg) {
             const feed = document.getElementById('terminal-log');
             const line = document.createElement('div');
@@ -290,20 +290,24 @@
             
             let i = 0;
             const typeSound = document.getElementById('sndType');
+            // Force the sound to be ready in the background
+            typeSound.preload = "auto"; 
+            typeSound.volume = 0.5;
 
-            // Function to handle character-by-character typing
             function typeChar() {
                 if (i < msg.length) {
+                    // 1. TRIGGER SOUND FIRST (to beat the lag)
+                    typeSound.currentTime = 0;
+                    typeSound.play().catch(e => {});
+
+                    // 2. ADD CHARACTER
                     line.innerHTML += msg.charAt(i);
                     i++;
                     
-                    // Trigger sound effect
-                    // We reset currentTime so the sound 're-triggers' rapidly for each letter
-                    typeSound.currentTime = 0;
-                    typeSound.play().catch(e => {});
-                    
-                    // Adjust this number (30) to make typing faster or slower
-                    setTimeout(typeChar, 30); 
+                    // 3. RECURSE
+                    // Typing speed is 40ms. If the sound is too laggy, 
+                    // increase this number slightly (e.g., 50 or 60)
+                    setTimeout(typeChar, 40); 
                     feed.scrollTop = feed.scrollHeight;
                 }
             }
