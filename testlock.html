@@ -263,13 +263,16 @@
             if (code === "GPS2026") {
                 document.getElementById('sndGrant').play().catch(e => {});
                 document.getElementById('login-screen').classList.add('fade-out');
+                
                 setTimeout(() => {
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('secure-dashboard').style.display = 'block';
-                    // STARTUP SEQUENCE LOGS
-                    logToTerminal("> AUTHENTICATION SUCCESSFUL.");
-                    setTimeout(() => logToTerminal("> CLEARANCE LEVEL 4 RECOGNIZED."), 800);
-                    setTimeout(() => logToTerminal("> ENCRYPTING CONNECTION..."), 1600);
+                    
+                    // STARTUP SEQUENCE WITH SYNCED SOUND
+                    // We stagger these so they type one after another
+                    setTimeout(() => logToTerminal("> AUTHENTICATION SUCCESSFUL."), 200);
+                    setTimeout(() => logToTerminal("> CLEARANCE LEVEL 4 RECOGNIZED."), 1200);
+                    setTimeout(() => logToTerminal("> ENCRYPTING CONNECTION..."), 2500);
                 }, 1000);
             } else {
                 document.getElementById('sndDeny').play().catch(e => {});
@@ -278,7 +281,7 @@
             }
         }
 
-        /* --- 3. THE IMPROVED TYPEWRITER LOGIC --- */
+        /* --- 3. THE SYNCED TYPEWRITER LOGIC --- */
         function logToTerminal(msg) {
             const feed = document.getElementById('terminal-log');
             const line = document.createElement('div');
@@ -288,18 +291,19 @@
             let i = 0;
             const typeSound = document.getElementById('sndType');
 
+            // Function to handle character-by-character typing
             function typeChar() {
                 if (i < msg.length) {
                     line.innerHTML += msg.charAt(i);
                     i++;
                     
-                    // Play type sound for every few characters to keep it from being too noisy
-                    if (i % 2 === 0) {
-                        typeSound.currentTime = 0;
-                        typeSound.play().catch(e => {});
-                    }
+                    // Trigger sound effect
+                    // We reset currentTime so the sound 're-triggers' rapidly for each letter
+                    typeSound.currentTime = 0;
+                    typeSound.play().catch(e => {});
                     
-                    setTimeout(typeChar, 30); // Speed of typing per character
+                    // Adjust this number (30) to make typing faster or slower
+                    setTimeout(typeChar, 30); 
                     feed.scrollTop = feed.scrollHeight;
                 }
             }
@@ -308,6 +312,7 @@
 
         /* --- 4. THE TERMINATE SEQUENCE --- */
         async function terminateSession() {
+            // Play the heavy wipe sound first
             document.getElementById('sndWipe').play().catch(e => {});
             
             const steps = [
@@ -317,12 +322,14 @@
                 "> DISCONNECTED."
             ];
 
-            // Run each step with the typewriter
+            // Loop through steps and wait for typing to finish before next line
             for (let j = 0; j < steps.length; j++) {
                 logToTerminal(steps[j]);
-                await new Promise(r => setTimeout(r, 800)); // Wait for typing to finish
+                // Wait 1 second between starting each line
+                await new Promise(r => setTimeout(r, 1000)); 
             }
 
+            // Final Shutdown
             setTimeout(() => {
                 document.getElementById('sndShutdown').play().catch(e => {});
                 setTimeout(() => {
