@@ -94,12 +94,13 @@
             background: var(--panel-bg); border: 1px solid var(--border-color);
             padding: 30px; text-align: left; cursor: pointer;
             transition: 0.4s; backdrop-filter: blur(10px); color: white;
+            width: 100%;
         }
 
         .dept-btn:hover { border-color: var(--primary-red); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-5px); }
         .dept-name { color: var(--primary-red); font-family: 'Share Tech Mono'; font-weight: bold; display: block; margin-bottom: 10px; font-size: 1.1rem; }
 
-        /* --- MASKED MODAL STYLES --- */
+        /* --- MASKED MODAL --- */
         #access-modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.95);
             display: none; justify-content: center; align-items: center;
@@ -107,45 +108,34 @@
         }
         .modal-box {
             background: #050505; border: 1px solid var(--primary-red);
-            padding: 40px; width: 400px; text-align: center;
+            padding: 40px; width: 420px; text-align: center;
             box-shadow: 0 0 50px rgba(255, 77, 77, 0.2);
         }
-        
+
         .masked-container {
-            position: relative;
-            background: #111;
-            padding: 20px;
-            margin: 20px 0;
+            position: relative; background: #0a0a0a;
+            padding: 25px; margin: 25px 0;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1.5rem;
-            display: flex;
-            justify-content: center;
-            letter-spacing: 4px;
+            font-size: 1.6rem; display: flex;
+            justify-content: center; letter-spacing: 5px;
+            border: 1px solid #1a1a1a; cursor: text;
         }
 
-        .ghost-text {
-            position: absolute;
-            color: #333; /* Dark grey for the X's */
-            z-index: 1;
-            pointer-events: none;
-            left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap;
+        .ghost-layer {
+            position: absolute; color: #333; z-index: 1;
+            pointer-events: none; white-space: nowrap;
         }
 
-        .real-input {
-            position: relative;
-            z-index: 2;
-            background: transparent;
-            border: none;
-            color: var(--primary-red);
-            font-family: inherit;
-            font-size: inherit;
-            letter-spacing: inherit;
-            outline: none;
-            width: 100%;
-            text-align: center;
-            text-transform: uppercase;
+        .user-layer {
+            position: absolute; color: var(--primary-red); z-index: 2;
+            pointer-events: none; white-space: nowrap;
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+        }
+
+        .hidden-input {
+            position: absolute; z-index: 3; opacity: 0;
+            width: 100%; height: 100%; cursor: text;
+            border: none; outline: none; left: 0; top: 0;
         }
 
         .terminal-feed {
@@ -181,9 +171,10 @@
         <div class="modal-box">
             <h3 id="modal-title" style="font-family:'Share Tech Mono'; color:var(--primary-red); letter-spacing:3px;">DEPT ACCESS</h3>
             
-            <div class="masked-container">
-                <div class="ghost-text" id="ghostDisplay">QA-XXX-XXX</div>
-                <input type="text" class="real-input" id="deptCodeInput" spellcheck="false" autocomplete="off">
+            <div class="masked-container" onclick="document.getElementById('deptCodeInput').focus()">
+                <div class="ghost-layer" id="ghostText">QA-XXX-XXX</div>
+                <div class="user-layer" id="userDisplay"></div>
+                <input type="text" class="hidden-input" id="deptCodeInput" maxlength="6" autocomplete="off" spellcheck="false">
             </div>
 
             <button class="verify-btn" onclick="validateDeptCode()">Authorize Access</button>
@@ -233,164 +224,136 @@
     <audio id="sndShutdown" src="shutdown.mp3"></audio>
 
     <script>
-    /* --- 1. CODE REGISTRY --- */
-    // Define the valid 6-digit codes (formatted as XXX-XXX)
-    const VALID_CODES = {
-        "ADM": ["111-222"],
-        "CMP": ["444-555"],
-        "COM": ["777-888"],
-        "INV": ["123-456"],
-        "QA":  ["000-111", "555-666"]
-    };
+        /* --- CODE REGISTRY --- */
+        const VALID_CODES = {
+            "ADM": ["111-222"],
+            "CMP": ["444-555"],
+            "COM": ["777-888"],
+            "INV": ["123-456"],
+            "QA":  ["000-111", "555-666"]
+        };
 
-    let currentActivePrefix = "";
+        let currentActivePrefix = "";
 
-    /* --- 2. MATRIX EFFECT --- */
-    const canvas = document.getElementById('matrix-canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    const characters = "010101"; const fontSize = 14;
-    const columns = canvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
-    function drawMatrix() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#ff4d4d"; ctx.font = fontSize + "px 'Share Tech Mono'";
-        drops.forEach((y, i) => {
-            const text = characters.charAt(Math.floor(Math.random() * characters.length));
-            ctx.fillText(text, i * fontSize, y * fontSize);
-            if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
-        });
-    }
-    setInterval(drawMatrix, 50);
-
-    /* --- 3. THE "IMMORTAL DASH" MASK LOGIC --- */
-    const realInput = document.getElementById('deptCodeInput');
-    const ghostDisplay = document.getElementById('ghostDisplay');
-
-    realInput.addEventListener('keydown', (e) => {
-        // Stop user from backspacing into the dash at index 3
-        // If they are at position 5 (e.g., "000-1"), backspace should just work.
-        // If they are at position 4 (e.g., "000-"), backspace jumps back to position 3.
-        if (e.key === "Backspace" && realInput.value.length === 4) {
-            realInput.value = realInput.value.substring(0, 3);
-            e.preventDefault();
+        /* --- MATRIX EFFECT --- */
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const characters = "010101"; const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#ff4d4d"; ctx.font = fontSize + "px 'Share Tech Mono'";
+            drops.forEach((y, i) => {
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                ctx.fillText(text, i * fontSize, y * fontSize);
+                if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            });
         }
-    });
+        setInterval(drawMatrix, 50);
 
-    realInput.addEventListener('input', (e) => {
-        // 1. Strip everything except numbers
-        let raw = realInput.value.replace(/[^0-9]/g, '');
-        
-        // 2. Limit strictly to 6 digits
-        if (raw.length > 6) raw = raw.substring(0, 6);
+        /* --- MASKED INPUT SCRIPT --- */
+        const realInput = document.getElementById('deptCodeInput');
+        const ghostText = document.getElementById('ghostText');
+        const userDisplay = document.getElementById('userDisplay');
 
-        // 3. Re-build the string with the forced Dash
-        let formatted = "";
-        if (raw.length > 3) {
-            formatted = raw.substring(0, 3) + "-" + raw.substring(3);
-        } else {
-            formatted = raw;
-        }
+        realInput.addEventListener('input', () => {
+            let val = realInput.value.replace(/[^0-9]/g, '');
+            realInput.value = val;
 
-        realInput.value = formatted;
-
-        // 4. Update the Ghost Text (QA-XXX-XXX)
-        // This ensures X's only disappear where numbers are typed
-        let prefixPart = currentActivePrefix + "-";
-        let ghostTemplate = "XXX-XXX";
-        let userInput = formatted;
-        
-        let finalGhost = prefixPart;
-        for (let i = 0; i < ghostTemplate.length; i++) {
-            // If the user has typed a character at this position in the 'formatted' string,
-            // we put a space in the ghost layer so the number shows through.
-            if (userInput[i]) {
-                finalGhost += " "; 
+            // Build Red User Text
+            let displayStr = currentActivePrefix + "-";
+            if (val.length > 0) {
+                if (val.length <= 3) displayStr += val;
+                else displayStr += val.substring(0, 3) + "-" + val.substring(3);
             } else {
-                finalGhost += ghostTemplate[i];
+                displayStr = ""; 
+            }
+            userDisplay.innerText = displayStr;
+
+            // Update Grey Ghost X's
+            let fullTemplate = currentActivePrefix + "-XXX-XXX";
+            let finalGhost = "";
+            for (let i = 0; i < fullTemplate.length; i++) {
+                if (displayStr[i]) finalGhost += "\u00A0"; 
+                else finalGhost += fullTemplate[i];
+            }
+            ghostText.innerText = finalGhost;
+        });
+
+        /* --- SYSTEM FUNCTIONS --- */
+        function checkClearance() {
+            const input = document.getElementById('passInput');
+            if (input.value.toUpperCase() === "GPS2026") {
+                document.getElementById('sndGrant').play().catch(e=>{});
+                document.getElementById('login-screen').classList.add('fade-out');
+                setTimeout(() => {
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('secure-dashboard').style.display = 'block';
+                    logToTerminal("> AUTHENTICATION SUCCESSFUL.");
+                    setTimeout(() => logToTerminal("> CLEARANCE LEVEL 4 RECOGNIZED."), 1200);
+                }, 1000);
+            } else {
+                document.getElementById('sndDeny').play().catch(e=>{});
+                input.classList.add('error-shake');
+                setTimeout(() => { input.classList.remove('error-shake'); input.value = ""; }, 500);
             }
         }
-        ghostDisplay.innerText = finalGhost;
-    });
 
-    /* --- 4. TERMINAL & SYSTEM LOGIC --- */
-    function checkClearance() {
-        const input = document.getElementById('passInput');
-        if (input.value.toUpperCase() === "GPS2026") {
-            document.getElementById('sndGrant').play().catch(e=>{});
-            document.getElementById('login-screen').classList.add('fade-out');
-            setTimeout(() => {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('secure-dashboard').style.display = 'block';
-                logToTerminal("> AUTHENTICATION SUCCESSFUL.");
-                setTimeout(() => logToTerminal("> CLEARANCE LEVEL 4 RECOGNIZED."), 1200);
-            }, 1000);
-        } else {
-            document.getElementById('sndDeny').play().catch(e=>{});
-            input.classList.add('error-shake');
-            setTimeout(() => { input.classList.remove('error-shake'); input.value = ""; }, 500);
-        }
-    }
-
-    function openAccessModal(name, prefix) {
-        logToTerminal(`> REQUESTING ACCESS: ${name.toUpperCase()}...`);
-        currentActivePrefix = prefix;
-        document.getElementById('modal-title').innerText = name + " ACCESS";
-        
-        // Clear input and reset ghost to the default e.g., QA-XXX-XXX
-        realInput.value = "";
-        ghostDisplay.innerText = prefix + "-XXX-XXX";
-        
-        setTimeout(() => { 
-            document.getElementById('access-modal').style.display = 'flex'; 
-            realInput.focus(); 
-        }, 1000);
-    }
-
-    function closeModal() { 
-        document.getElementById('access-modal').style.display = 'none'; 
-        logToTerminal("> REQUEST CANCELLED."); 
-    }
-
-    function validateDeptCode() {
-        const val = realInput.value;
-        if (VALID_CODES[currentActivePrefix].includes(val)) {
-            document.getElementById('sndGrant').play().catch(e=>{});
-            logToTerminal(`> CLEARANCE VALIDATED: ${currentActivePrefix}-${val}`);
+        function openAccessModal(name, prefix) {
+            logToTerminal(`> REQUESTING ACCESS: ${name.toUpperCase()}...`);
+            currentActivePrefix = prefix;
+            document.getElementById('modal-title').innerText = name + " ACCESS";
+            realInput.value = "";
+            userDisplay.innerText = "";
+            ghostText.innerText = prefix + "-XXX-XXX";
             setTimeout(() => { 
-                window.location.href = currentActivePrefix.toLowerCase() + "_hub.html"; 
-            }, 1200);
-        } else {
-            document.getElementById('sndDeny').play().catch(e=>{});
-            document.querySelector('.modal-box').classList.add('error-shake');
-            logToTerminal(`> [!] ACCESS DENIED: ${currentActivePrefix}-${val}`);
-            setTimeout(() => { document.querySelector('.modal-box').classList.remove('error-shake'); }, 500);
+                document.getElementById('access-modal').style.display = 'flex'; 
+                realInput.focus(); 
+            }, 1000);
         }
-    }
 
-    function logToTerminal(msg) {
-        const feed = document.getElementById('terminal-log');
-        const line = document.createElement('div');
-        line.style.marginBottom = "5px"; feed.appendChild(line);
-        let i = 0; const typeSound = document.getElementById('sndType');
-        function typeChar() {
-            if (i < msg.length) {
-                typeSound.currentTime = 0; typeSound.play().catch(e=>{});
-                line.innerHTML += msg.charAt(i); i++;
-                setTimeout(typeChar, 40); feed.scrollTop = feed.scrollHeight;
+        function closeModal() { document.getElementById('access-modal').style.display = 'none'; logToTerminal("> REQUEST CANCELLED."); }
+
+        function validateDeptCode() {
+            const raw = realInput.value;
+            let formatted = raw.length > 3 ? raw.substring(0, 3) + "-" + raw.substring(3) : raw;
+            if (VALID_CODES[currentActivePrefix].includes(formatted)) {
+                document.getElementById('sndGrant').play().catch(e=>{});
+                logToTerminal(`> CLEARANCE VALIDATED: ${currentActivePrefix}-${formatted}`);
+                setTimeout(() => { window.location.href = currentActivePrefix.toLowerCase() + "_hub.html"; }, 1200);
+            } else {
+                document.getElementById('sndDeny').play().catch(e=>{});
+                document.querySelector('.modal-box').classList.add('error-shake');
+                logToTerminal(`> [!] ACCESS DENIED: ${currentPrefix}-${formatted}`);
+                setTimeout(() => { document.querySelector('.modal-box').classList.remove('error-shake'); }, 500);
             }
         }
-        typeChar();
-    }
 
-    async function terminateSession() {
-        document.getElementById('sndWipe').play().catch(e=>{});
-        const steps = ["> [!] INITIATING WIPE...", "> SCRUBBING DATA...", "> DISCONNECTED."];
-        for (let step of steps) { logToTerminal(step); await new Promise(r => setTimeout(r, 1000)); }
-        document.getElementById('sndShutdown').play().catch(e=>{});
-        setTimeout(() => { window.location.href = "index.html"; }, 1500);
-    }
-</script>
+        function logToTerminal(msg) {
+            const feed = document.getElementById('terminal-log');
+            const line = document.createElement('div');
+            line.style.marginBottom = "5px"; feed.appendChild(line);
+            let i = 0; const typeSound = document.getElementById('sndType');
+            function typeChar() {
+                if (i < msg.length) {
+                    typeSound.currentTime = 0; typeSound.play().catch(e=>{});
+                    line.innerHTML += msg.charAt(i); i++;
+                    setTimeout(typeChar, 40); feed.scrollTop = feed.scrollHeight;
+                }
+            }
+            typeChar();
+        }
+
+        async function terminateSession() {
+            document.getElementById('sndWipe').play().catch(e=>{});
+            const steps = ["> [!] INITIATING WIPE...", "> SCRUBBING DATA...", "> DISCONNECTED."];
+            for (let step of steps) { logToTerminal(step); await new Promise(r => setTimeout(r, 1000)); }
+            document.getElementById('sndShutdown').play().catch(e=>{});
+            setTimeout(() => { window.location.href = "index.html"; }, 1500);
+        }
+    </script>
 </body>
 </html>
