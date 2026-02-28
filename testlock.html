@@ -99,14 +99,7 @@
         .dept-btn:hover { border-color: var(--primary-red); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-5px); }
         .dept-name { color: var(--primary-red); font-family: 'Share Tech Mono'; font-weight: bold; display: block; margin-bottom: 10px; font-size: 1.1rem; }
 
-        .terminal-feed {
-            background: #000; border: 1px solid #222; padding: 20px;
-            font-family: 'Share Tech Mono', monospace; color: #00ff00;
-            font-size: 0.8rem; height: 200px; overflow-y: auto; border-radius: 4px;
-            margin-top: 30px; line-height: 1.5;
-        }
-
-        /* --- MODAL STYLES --- */
+        /* --- MASKED MODAL STYLES --- */
         #access-modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.95);
             display: none; justify-content: center; align-items: center;
@@ -114,18 +107,52 @@
         }
         .modal-box {
             background: #050505; border: 1px solid var(--primary-red);
-            padding: 40px; width: 380px; text-align: center;
+            padding: 40px; width: 400px; text-align: center;
             box-shadow: 0 0 50px rgba(255, 77, 77, 0.2);
         }
-        .input-wrapper {
-            display: flex; background: #111; border: 1px solid #333;
-            padding: 15px; margin: 25px 0; align-items: center; justify-content: center;
+        
+        .masked-container {
+            position: relative;
+            background: #111;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.5rem;
+            display: flex;
+            justify-content: center;
+            letter-spacing: 4px;
         }
-        .prefix-locked { color: var(--primary-red); font-family: 'Share Tech Mono'; font-size: 1.2rem; user-select: none; }
-        .code-input {
-            background: transparent; border: none; color: var(--primary-red);
-            font-family: 'Share Tech Mono'; font-size: 1.2rem; width: 120px; outline: none;
-            letter-spacing: 2px;
+
+        .ghost-text {
+            position: absolute;
+            color: #333; /* Dark grey for the X's */
+            z-index: 1;
+            pointer-events: none;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+
+        .real-input {
+            position: relative;
+            z-index: 2;
+            background: transparent;
+            border: none;
+            color: var(--primary-red);
+            font-family: inherit;
+            font-size: inherit;
+            letter-spacing: inherit;
+            outline: none;
+            width: 100%;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .terminal-feed {
+            background: #000; border: 1px solid #222; padding: 20px;
+            font-family: 'Share Tech Mono', monospace; color: #00ff00;
+            font-size: 0.8rem; height: 180px; overflow-y: auto; border-radius: 4px;
+            margin-top: 30px; line-height: 1.5;
         }
 
         .terminate-btn { display: inline-block; margin-top: 30px; color: #444; text-decoration: none; font-family: 'Share Tech Mono'; cursor: pointer; font-size: 0.8rem; }
@@ -153,10 +180,12 @@
     <div id="access-modal">
         <div class="modal-box">
             <h3 id="modal-title" style="font-family:'Share Tech Mono'; color:var(--primary-red); letter-spacing:3px;">DEPT ACCESS</h3>
-            <div class="input-wrapper">
-                <span class="prefix-locked" id="modal-prefix">QA-</span>
-                <input type="text" class="code-input" id="deptCodeInput" placeholder="XXX-XXX" maxlength="7">
+            
+            <div class="masked-container">
+                <div class="ghost-text" id="ghostDisplay">QA-XXX-XXX</div>
+                <input type="text" class="real-input" id="deptCodeInput" spellcheck="false" autocomplete="off">
             </div>
+
             <button class="verify-btn" onclick="validateDeptCode()">Authorize Access</button>
             <button class="terminate-btn" style="display:block; width:100%; margin-top:20px;" onclick="closeModal()">CANCEL</button>
         </div>
@@ -169,25 +198,25 @@
         </header>
 
         <div class="dept-grid">
-            <button class="dept-btn" onclick="openAccessModal('Administration', 'ADM-', 'admin_hub.html')">
+            <button class="dept-btn" onclick="openAccessModal('Administration', 'ADM')">
                 <span class="dept-name">Administration</span>
                 <p style="font-size: 0.8rem; color: #999; margin:0;">Personnel management and system overrides.</p>
             </button>
-            <button class="dept-btn" onclick="openAccessModal('Compliance', 'CMP-', 'compliance.html')">
+            <button class="dept-btn" onclick="openAccessModal('Compliance', 'CMP')">
                 <span class="dept-name">Compliance</span>
                 <p style="font-size: 0.8rem; color: #999; margin:0;">Safety protocols and rule enforcement data.</p>
             </button>
-            <button class="dept-btn" onclick="openAccessModal('Communications', 'COM-', 'comms.html')">
+            <button class="dept-btn" onclick="openAccessModal('Communications', 'COM')">
                 <span class="dept-name">Communications</span>
-                <p style="font-size: 0.8rem; color: #999; margin:0;">Public relations and internal staff bulletins.</p>
+                <p style="font-size: 0.8rem; color: #999; margin:0;">Public relations and internal bulletins.</p>
             </button>
-            <button class="dept-btn" onclick="openAccessModal('Innovation', 'INV-', 'innovation.html')">
+            <button class="dept-btn" onclick="openAccessModal('Innovation', 'INV')">
                 <span class="dept-name">Innovation</span>
                 <p style="font-size: 0.8rem; color: #999; margin:0;">Research and development for grid tech.</p>
             </button>
-            <button class="dept-btn" onclick="openAccessModal('QA Dept', 'QA-', 'qa_logs.html')">
+            <button class="dept-btn" onclick="openAccessModal('QA Dept', 'QA')">
                 <span class="dept-name">QA Dept</span>
-                <p style="font-size: 0.8rem; color: #999; margin:0;">Bug tracking and system stability reporting.</p>
+                <p style="font-size: 0.8rem; color: #999; margin:0;">Bug tracking and stability reporting.</p>
             </button>
         </div>
 
@@ -204,26 +233,24 @@
     <audio id="sndShutdown" src="shutdown.mp3"></audio>
 
     <script>
-        /* --- 1. CODE REGISTRY (EDIT THESE) --- */
+        /* --- CODE REGISTRY --- */
         const VALID_CODES = {
-            "ADM-": ["111-222", "888-999"],
-            "CMP-": ["444-555"],
-            "COM-": ["777-888"],
-            "INV-": ["123-456"],
-            "QA-":  ["000-111", "555-666"]
+            "ADM": ["111-222"],
+            "CMP": ["444-555"],
+            "COM": ["777-888"],
+            "INV": ["123-456"],
+            "QA":  ["000-111", "555-666"]
         };
 
-        let currentPrefix = "";
-        let currentTargetPage = "";
+        let currentActivePrefix = "";
 
-        /* --- 2. MATRIX EFFECT --- */
+        /* --- MATRIX EFFECT --- */
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         const characters = "010101"; const fontSize = 14;
         const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
-
         function drawMatrix() {
             ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "#ff4d4d"; ctx.font = fontSize + "px 'Share Tech Mono'";
@@ -236,7 +263,47 @@
         }
         setInterval(drawMatrix, 50);
 
-        /* --- 3. LOGIN & MODAL --- */
+        /* --- MASKED INPUT LOGIC --- */
+        const realInput = document.getElementById('deptCodeInput');
+        const ghostDisplay = document.getElementById('ghostDisplay');
+
+        realInput.addEventListener('input', (e) => {
+            let val = realInput.value.toUpperCase().replace(/[^0-9]/g, ''); // Only allow numbers
+            
+            // Limit to 6 digits (XXX XXX)
+            if (val.length > 6) val = val.substring(0, 6);
+            
+            // Construct the formatted display
+            let formatted = val;
+            if (val.length > 3) {
+                formatted = val.substring(0, 3) + '-' + val.substring(3);
+            }
+
+            // Update the real input value (with dash)
+            realInput.value = formatted;
+
+            // UPDATE GHOST TEXT
+            // Start with Prefix (e.g., QA-)
+            let ghostBase = currentActivePrefix + "-XXX-XXX";
+            let resultGhost = "";
+            
+            // The logic: replace X's with spaces where user has typed
+            // We want the X's to stay if the user hasn't typed there.
+            let fullTargetLength = currentActivePrefix.length + 8; // e.g. "QA" + "-XXX-XXX"
+            let userTyped = currentActivePrefix + "-" + formatted;
+            
+            // Combine them: Use typed character if it exists, otherwise use ghost char
+            for(let i=0; i < ghostBase.length; i++) {
+                if(userTyped[i]) {
+                    resultGhost += " "; // Hide ghost character by using a space
+                } else {
+                    resultGhost += ghostBase[i];
+                }
+            }
+            ghostDisplay.innerText = resultGhost;
+        });
+
+        /* --- SYSTEM LOGIC --- */
         function checkClearance() {
             const input = document.getElementById('passInput');
             if (input.value.toUpperCase() === "GPS2026") {
@@ -255,38 +322,44 @@
             }
         }
 
-        function openAccessModal(name, prefix, target) {
+        function openAccessModal(name, prefix) {
             logToTerminal(`> REQUESTING ACCESS: ${name.toUpperCase()}...`);
-            currentPrefix = prefix; currentTargetPage = target;
+            currentActivePrefix = prefix;
             document.getElementById('modal-title').innerText = name + " ACCESS";
-            document.getElementById('modal-prefix').innerText = prefix;
-            document.getElementById('deptCodeInput').value = "";
-            setTimeout(() => { document.getElementById('access-modal').style.display = 'flex'; document.getElementById('deptCodeInput').focus(); }, 1000);
+            
+            // Reset Input and Ghost
+            realInput.value = "";
+            ghostDisplay.innerText = prefix + "-XXX-XXX";
+            
+            setTimeout(() => { 
+                document.getElementById('access-modal').style.display = 'flex'; 
+                realInput.focus(); 
+            }, 1000);
         }
 
         function closeModal() { document.getElementById('access-modal').style.display = 'none'; logToTerminal("> REQUEST CANCELLED."); }
 
         function validateDeptCode() {
-            const val = document.getElementById('deptCodeInput').value;
-            if (VALID_CODES[currentPrefix].includes(val)) {
+            const val = realInput.value; // This is "123-456"
+            const codeOnly = val; // Already has the dash from the input listener
+            
+            if (VALID_CODES[currentActivePrefix].includes(codeOnly)) {
                 document.getElementById('sndGrant').play().catch(e=>{});
-                logToTerminal(`> CLEARANCE VALIDATED: ${currentPrefix}${val}`);
-                setTimeout(() => { window.location.href = currentTargetPage; }, 1200);
+                logToTerminal(`> CLEARANCE VALIDATED: ${currentActivePrefix}-${val}`);
+                setTimeout(() => { window.location.href = currentActivePrefix.toLowerCase() + "_hub.html"; }, 1200);
             } else {
                 document.getElementById('sndDeny').play().catch(e=>{});
                 document.querySelector('.modal-box').classList.add('error-shake');
-                logToTerminal(`> [!] SECURITY BREACH: INVALID KEY ${currentPrefix}${val}`);
+                logToTerminal(`> [!] SECURITY BREACH: INVALID KEY ${currentActivePrefix}-${val}`);
                 setTimeout(() => { document.querySelector('.modal-box').classList.remove('error-shake'); }, 500);
             }
         }
 
-        /* --- 4. THE TYPEWRITER --- */
         function logToTerminal(msg) {
             const feed = document.getElementById('terminal-log');
             const line = document.createElement('div');
             line.style.marginBottom = "5px"; feed.appendChild(line);
             let i = 0; const typeSound = document.getElementById('sndType');
-
             function typeChar() {
                 if (i < msg.length) {
                     typeSound.currentTime = 0; typeSound.play().catch(e=>{});
@@ -297,7 +370,6 @@
             typeChar();
         }
 
-        /* --- 5. TERMINATE --- */
         async function terminateSession() {
             document.getElementById('sndWipe').play().catch(e=>{});
             const steps = ["> [!] INITIATING WIPE...", "> SCRUBBING DATA...", "> DISCONNECTED."];
