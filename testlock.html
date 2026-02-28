@@ -113,7 +113,7 @@
             margin: 0;
         }
 
-        /* --- DEPARTMENT GRID --- */
+        /* --- DEPARTMENT BUTTON GRID --- */
         .dept-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -121,16 +121,22 @@
             margin-bottom: 40px;
         }
 
-        .dept-card {
+        /* Re-styled as buttons */
+        .dept-btn {
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
             padding: 30px;
             position: relative;
             transition: 0.4s;
             backdrop-filter: blur(10px);
+            text-align: left;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            color: white;
         }
 
-        .dept-card:hover {
+        .dept-btn:hover {
             border-color: var(--primary-red);
             box-shadow: 0 0 20px var(--accent-glow);
             transform: translateY(-5px);
@@ -143,6 +149,7 @@
             display: block;
             margin-bottom: 10px;
             letter-spacing: 1px;
+            font-size: 1.1rem;
         }
 
         .terminal-feed {
@@ -151,6 +158,7 @@
             color: #00ff00; font-size: 0.8rem;
             height: 200px; overflow-y: auto; border-radius: 4px;
             margin-top: 30px;
+            line-height: 1.5;
         }
 
         .terminate-btn {
@@ -191,17 +199,30 @@
         </header>
 
         <div class="dept-grid">
-            <div class="dept-card"><span class="dept-name">Administration</span><p style="font-size: 0.8rem; color: #999;">Manage personnel, system overrides, and high-level strategy.</p></div>
-            <div class="dept-card"><span class="dept-name">Compliance</span><p style="font-size: 0.8rem; color: #999;">Audit facility safety protocols and rule enforcement data.</p></div>
-            <div class="dept-card"><span class="dept-name">Communications</span><p style="font-size: 0.8rem; color: #999;">Centralize bulletins, media releases, and internal memos.</p></div>
-            <div class="dept-card"><span class="dept-name">Innovation</span><p style="font-size: 0.8rem; color: #999;">Research and development for future grid infrastructure.</p></div>
-            <div class="dept-card"><span class="dept-name">QA Dept</span><p style="font-size: 0.8rem; color: #999;">Bug verification, stress testing, and system stability reports.</p></div>
+            <button class="dept-btn" onclick="logToTerminal('> ACCESSING ADMIN OVERRIDE...')">
+                <span class="dept-name">Administration</span>
+                <p style="font-size: 0.8rem; color: #999; margin:0;">Manage personnel, system overrides, and high-level strategy.</p>
+            </button>
+            <button class="dept-btn" onclick="logToTerminal('> AUDITING COMPLIANCE LOGS...')">
+                <span class="dept-name">Compliance</span>
+                <p style="font-size: 0.8rem; color: #999; margin:0;">Audit facility safety protocols and rule enforcement data.</p>
+            </button>
+            <button class="dept-btn" onclick="logToTerminal('> OPENING COMMS CHANNELS...')">
+                <span class="dept-name">Communications</span>
+                <p style="font-size: 0.8rem; color: #999; margin:0;">Centralize bulletins, media releases, and internal memos.</p>
+            </button>
+            <button class="dept-btn" onclick="logToTerminal('> LOADING INNOVATION BLUEPRINTS...')">
+                <span class="dept-name">Innovation</span>
+                <p style="font-size: 0.8rem; color: #999; margin:0;">Research and development for future grid infrastructure.</p>
+            </button>
+            <button class="dept-btn" onclick="logToTerminal('> FETCHING QA ERROR REPORTS...')">
+                <span class="dept-name">QA Dept</span>
+                <p style="font-size: 0.8rem; color: #999; margin:0;">Bug verification, stress testing, and system stability reports.</p>
+            </button>
         </div>
 
         <div style="font-family: 'Share Tech Mono'; color: #444; font-size: 0.7rem; margin-bottom: 10px;">> LIVE SYSTEM MONITOR</div>
-        <div class="terminal-feed" id="terminal-log">
-            > STANDBY FOR COMMAND...<br>
-        </div>
+        <div class="terminal-feed" id="terminal-log"></div>
 
         <a class="terminate-btn" onclick="terminateSession()">[ TERMINATE_SESSION_OVERRIDE ]</a>
     </main>
@@ -245,7 +266,10 @@
                 setTimeout(() => {
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('secure-dashboard').style.display = 'block';
-                    logToTerminal("> AUTHENTICATION SUCCESSFUL.<br>> CLEARANCE LEVEL 4 RECOGNIZED.<br>> ENCRYPTING CONNECTION...");
+                    // STARTUP SEQUENCE LOGS
+                    logToTerminal("> AUTHENTICATION SUCCESSFUL.");
+                    setTimeout(() => logToTerminal("> CLEARANCE LEVEL 4 RECOGNIZED."), 800);
+                    setTimeout(() => logToTerminal("> ENCRYPTING CONNECTION..."), 1600);
                 }, 1000);
             } else {
                 document.getElementById('sndDeny').play().catch(e => {});
@@ -254,42 +278,57 @@
             }
         }
 
-        /* --- 3. TERMINAL UTILS --- */
+        /* --- 3. THE IMPROVED TYPEWRITER LOGIC --- */
         function logToTerminal(msg) {
             const feed = document.getElementById('terminal-log');
-            feed.innerHTML += msg + "<br>";
-            feed.scrollTop = feed.scrollHeight;
-            document.getElementById('sndType').currentTime = 0;
-            document.getElementById('sndType').play().catch(e => {});
+            const line = document.createElement('div');
+            line.style.marginBottom = "5px";
+            feed.appendChild(line);
+            
+            let i = 0;
+            const typeSound = document.getElementById('sndType');
+
+            function typeChar() {
+                if (i < msg.length) {
+                    line.innerHTML += msg.charAt(i);
+                    i++;
+                    
+                    // Play type sound for every few characters to keep it from being too noisy
+                    if (i % 2 === 0) {
+                        typeSound.currentTime = 0;
+                        typeSound.play().catch(e => {});
+                    }
+                    
+                    setTimeout(typeChar, 30); // Speed of typing per character
+                    feed.scrollTop = feed.scrollHeight;
+                }
+            }
+            typeChar();
         }
 
         /* --- 4. THE TERMINATE SEQUENCE --- */
-        function terminateSession() {
+        async function terminateSession() {
             document.getElementById('sndWipe').play().catch(e => {});
             
             const steps = [
                 "> [!] TERMINATION REQUESTED...",
                 "> SCRUBBING PERSONNEL DATA...",
                 "> PURGING SESSION KEYS...",
-                "> WIPING TEMPORARY CACHE...",
-                "> OVERWRITING SECTORS 0-255...",
-                "> SHUTTING DOWN CORE NODES...",
                 "> DISCONNECTED."
             ];
 
-            let i = 0;
-            const sequence = setInterval(() => {
-                if (i < steps.length) {
-                    logToTerminal("<span style='color:red;'>" + steps[i] + "</span>");
-                    i++;
-                } else {
-                    clearInterval(sequence);
-                    document.getElementById('sndShutdown').play().catch(e => {});
-                    setTimeout(() => {
-                        window.location.href = "index.html";
-                    }, 2000); 
-                }
-            }, 600);
+            // Run each step with the typewriter
+            for (let j = 0; j < steps.length; j++) {
+                logToTerminal(steps[j]);
+                await new Promise(r => setTimeout(r, 800)); // Wait for typing to finish
+            }
+
+            setTimeout(() => {
+                document.getElementById('sndShutdown').play().catch(e => {});
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 2000);
+            }, 500);
         }
     </script>
 </body>
