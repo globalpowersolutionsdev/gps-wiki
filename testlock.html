@@ -26,28 +26,20 @@
         }
 
         #matrix-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            z-index: 1;
-            opacity: 0.15;
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; z-index: 1;
+            opacity: 0.15; pointer-events: none;
         }
 
         /* --- LOGIN SCREEN --- */
         #login-screen {
-            position: fixed;
-            inset: 0;
+            position: fixed; inset: 0;
             background: radial-gradient(circle at center, #1a0505 0%, #000 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: all 1s ease;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; transition: all 1s ease;
         }
 
         .login-box {
-            text-align: center;
-            padding: 60px;
+            text-align: center; padding: 60px;
             border: 1px solid var(--primary-red);
             background: rgba(0,0,0,0.95);
             box-shadow: 0 0 40px var(--accent-glow);
@@ -55,18 +47,15 @@
         }
 
         .biometric-scanner {
-            width: 70px; height: 70px;
-            margin: 0 auto 25px;
-            border: 2px solid var(--primary-red);
-            border-radius: 50%;
+            width: 70px; height: 70px; margin: 0 auto 25px;
+            border: 2px solid var(--primary-red); border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
             position: relative;
         }
 
         .biometric-scanner::after {
             content: ""; width: 40px; height: 2px;
-            background: var(--primary-red);
-            position: absolute;
+            background: var(--primary-red); position: absolute;
             animation: scanLine 2s infinite ease-in-out;
         }
 
@@ -77,16 +66,14 @@
             padding: 15px; color: var(--primary-red);
             font-family: 'Share Tech Mono', monospace;
             font-size: 1.2rem; text-align: center; width: 100%;
-            outline: none; margin-bottom: 20px;
+            outline: none; margin-bottom: 20px; box-sizing: border-box;
         }
 
         .verify-btn {
-            width: 100%; padding: 12px;
-            background: transparent; color: var(--primary-red);
-            border: 1px solid var(--primary-red);
-            font-family: 'Share Tech Mono', monospace;
-            font-weight: bold; cursor: pointer;
-            transition: 0.3s;
+            width: 100%; padding: 12px; background: transparent;
+            color: var(--primary-red); border: 1px solid var(--primary-red);
+            font-family: 'Share Tech Mono', monospace; font-weight: bold;
+            cursor: pointer; transition: 0.3s; text-transform: uppercase;
         }
 
         .verify-btn:hover { background: var(--primary-red); color: black; box-shadow: 0 0 20px var(--primary-red); }
@@ -95,86 +82,57 @@
         #secure-dashboard {
             position: relative; z-index: 10;
             padding: 60px 10%; display: none;
-            overflow-y: auto;
-            height: 100vh;
-            box-sizing: border-box;
+            overflow-y: auto; height: 100vh; box-sizing: border-box;
         }
 
-        .header-main {
-            border-bottom: 2px solid var(--primary-red);
-            padding-bottom: 20px;
-            margin-bottom: 40px;
-        }
+        .header-main { border-bottom: 2px solid var(--primary-red); padding-bottom: 20px; margin-bottom: 40px; }
+        .header-main h1 { font-family: 'Share Tech Mono', monospace; letter-spacing: 4px; color: var(--primary-red); margin: 0; }
 
-        .header-main h1 {
-            font-family: 'Share Tech Mono', monospace;
-            letter-spacing: 4px;
-            color: var(--primary-red);
-            margin: 0;
-        }
+        .dept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 40px; }
 
-        /* --- DEPARTMENT BUTTON GRID --- */
-        .dept-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        /* Re-styled as buttons */
         .dept-btn {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            padding: 30px;
-            position: relative;
-            transition: 0.4s;
-            backdrop-filter: blur(10px);
-            text-align: left;
-            cursor: pointer;
-            display: block;
-            width: 100%;
-            color: white;
+            background: var(--panel-bg); border: 1px solid var(--border-color);
+            padding: 30px; text-align: left; cursor: pointer;
+            transition: 0.4s; backdrop-filter: blur(10px); color: white;
         }
 
-        .dept-btn:hover {
-            border-color: var(--primary-red);
-            box-shadow: 0 0 20px var(--accent-glow);
-            transform: translateY(-5px);
-        }
-
-        .dept-name {
-            color: var(--primary-red);
-            font-family: 'Share Tech Mono', monospace;
-            font-weight: bold;
-            display: block;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-            font-size: 1.1rem;
-        }
+        .dept-btn:hover { border-color: var(--primary-red); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-5px); }
+        .dept-name { color: var(--primary-red); font-family: 'Share Tech Mono'; font-weight: bold; display: block; margin-bottom: 10px; font-size: 1.1rem; }
 
         .terminal-feed {
-            background: #000; border: 1px solid #222;
-            padding: 20px; font-family: 'Share Tech Mono', monospace;
-            color: #00ff00; font-size: 0.8rem;
-            height: 200px; overflow-y: auto; border-radius: 4px;
-            margin-top: 30px;
-            line-height: 1.5;
+            background: #000; border: 1px solid #222; padding: 20px;
+            font-family: 'Share Tech Mono', monospace; color: #00ff00;
+            font-size: 0.8rem; height: 200px; overflow-y: auto; border-radius: 4px;
+            margin-top: 30px; line-height: 1.5;
         }
 
-        .terminate-btn {
-            display: inline-block; margin-top: 30px;
-            color: #444; text-decoration: none;
-            font-family: 'Share Tech Mono', monospace;
-            cursor: pointer;
-            font-size: 0.8rem;
+        /* --- MODAL STYLES --- */
+        #access-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            display: none; justify-content: center; align-items: center;
+            z-index: 2000; backdrop-filter: blur(15px);
+        }
+        .modal-box {
+            background: #050505; border: 1px solid var(--primary-red);
+            padding: 40px; width: 380px; text-align: center;
+            box-shadow: 0 0 50px rgba(255, 77, 77, 0.2);
+        }
+        .input-wrapper {
+            display: flex; background: #111; border: 1px solid #333;
+            padding: 15px; margin: 25px 0; align-items: center; justify-content: center;
+        }
+        .prefix-locked { color: var(--primary-red); font-family: 'Share Tech Mono'; font-size: 1.2rem; user-select: none; }
+        .code-input {
+            background: transparent; border: none; color: var(--primary-red);
+            font-family: 'Share Tech Mono'; font-size: 1.2rem; width: 120px; outline: none;
+            letter-spacing: 2px;
         }
 
+        .terminate-btn { display: inline-block; margin-top: 30px; color: #444; text-decoration: none; font-family: 'Share Tech Mono'; cursor: pointer; font-size: 0.8rem; }
         .terminate-btn:hover { color: var(--primary-red); }
-
         .error-shake { animation: shake 0.4s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
         .fade-out { opacity: 0; pointer-events: none; }
-
     </style>
 </head>
 <body>
@@ -187,8 +145,20 @@
                 <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ff4d4d" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             </div>
             <h2 style="font-family:'Share Tech Mono'; letter-spacing:5px;">CLEARANCE REQUIRED</h2>
-            <input type="password" id="passInput" placeholder="ENTER ID">
-            <button class="verify-btn" onclick="checkClearance()">VERIFY BIOMETRICS</button>
+            <input type="password" id="passInput" placeholder="ENTER SYSTEM KEY">
+            <button class="verify-btn" onclick="checkClearance()">Verify Identity</button>
+        </div>
+    </div>
+
+    <div id="access-modal">
+        <div class="modal-box">
+            <h3 id="modal-title" style="font-family:'Share Tech Mono'; color:var(--primary-red); letter-spacing:3px;">DEPT ACCESS</h3>
+            <div class="input-wrapper">
+                <span class="prefix-locked" id="modal-prefix">QA-</span>
+                <input type="text" class="code-input" id="deptCodeInput" placeholder="XXX-XXX" maxlength="7">
+            </div>
+            <button class="verify-btn" onclick="validateDeptCode()">Authorize Access</button>
+            <button class="terminate-btn" style="display:block; width:100%; margin-top:20px;" onclick="closeModal()">CANCEL</button>
         </div>
     </div>
 
@@ -199,25 +169,25 @@
         </header>
 
         <div class="dept-grid">
-            <button class="dept-btn" onclick="logToTerminal('> ACCESSING ADMIN OVERRIDE...')">
+            <button class="dept-btn" onclick="openAccessModal('Administration', 'ADM-', 'admin_hub.html')">
                 <span class="dept-name">Administration</span>
-                <p style="font-size: 0.8rem; color: #999; margin:0;">Manage personnel, system overrides, and high-level strategy.</p>
+                <p style="font-size: 0.8rem; color: #999; margin:0;">Personnel management and system overrides.</p>
             </button>
-            <button class="dept-btn" onclick="logToTerminal('> AUDITING COMPLIANCE LOGS...')">
+            <button class="dept-btn" onclick="openAccessModal('Compliance', 'CMP-', 'compliance.html')">
                 <span class="dept-name">Compliance</span>
-                <p style="font-size: 0.8rem; color: #999; margin:0;">Audit facility safety protocols and rule enforcement data.</p>
+                <p style="font-size: 0.8rem; color: #999; margin:0;">Safety protocols and rule enforcement data.</p>
             </button>
-            <button class="dept-btn" onclick="logToTerminal('> OPENING COMMS CHANNELS...')">
+            <button class="dept-btn" onclick="openAccessModal('Communications', 'COM-', 'comms.html')">
                 <span class="dept-name">Communications</span>
-                <p style="font-size: 0.8rem; color: #999; margin:0;">Centralize bulletins, media releases, and internal memos.</p>
+                <p style="font-size: 0.8rem; color: #999; margin:0;">Public relations and internal staff bulletins.</p>
             </button>
-            <button class="dept-btn" onclick="logToTerminal('> LOADING INNOVATION BLUEPRINTS...')">
+            <button class="dept-btn" onclick="openAccessModal('Innovation', 'INV-', 'innovation.html')">
                 <span class="dept-name">Innovation</span>
-                <p style="font-size: 0.8rem; color: #999; margin:0;">Research and development for future grid infrastructure.</p>
+                <p style="font-size: 0.8rem; color: #999; margin:0;">Research and development for grid tech.</p>
             </button>
-            <button class="dept-btn" onclick="logToTerminal('> FETCHING QA ERROR REPORTS...')">
+            <button class="dept-btn" onclick="openAccessModal('QA Dept', 'QA-', 'qa_logs.html')">
                 <span class="dept-name">QA Dept</span>
-                <p style="font-size: 0.8rem; color: #999; margin:0;">Bug verification, stress testing, and system stability reports.</p>
+                <p style="font-size: 0.8rem; color: #999; margin:0;">Bug tracking and system stability reporting.</p>
             </button>
         </div>
 
@@ -234,12 +204,23 @@
     <audio id="sndShutdown" src="shutdown.mp3"></audio>
 
     <script>
-        /* --- 1. MATRIX EFFECT --- */
+        /* --- 1. CODE REGISTRY (EDIT THESE) --- */
+        const VALID_CODES = {
+            "ADM-": ["111-222", "888-999"],
+            "CMP-": ["444-555"],
+            "COM-": ["777-888"],
+            "INV-": ["123-456"],
+            "QA-":  ["000-111", "555-666"]
+        };
+
+        let currentPrefix = "";
+        let currentTargetPage = "";
+
+        /* --- 2. MATRIX EFFECT --- */
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const characters = "01010101";
-        const fontSize = 14;
+        const characters = "010101"; const fontSize = 14;
         const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
 
@@ -255,91 +236,74 @@
         }
         setInterval(drawMatrix, 50);
 
-        /* --- 2. LOGIN LOGIC (STAGGERED FOR SYNC) --- */
+        /* --- 3. LOGIN & MODAL --- */
         function checkClearance() {
             const input = document.getElementById('passInput');
-            const code = input.value.toUpperCase();
-            
-            if (code === "GPS2026") {
-                document.getElementById('sndGrant').play().catch(e => {});
+            if (input.value.toUpperCase() === "GPS2026") {
+                document.getElementById('sndGrant').play().catch(e=>{});
                 document.getElementById('login-screen').classList.add('fade-out');
-                
                 setTimeout(() => {
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('secure-dashboard').style.display = 'block';
-                    
-                    // We use longer timeouts here so the typewriter 
-                    // has time to finish one line before the next starts.
                     logToTerminal("> AUTHENTICATION SUCCESSFUL.");
-                    setTimeout(() => logToTerminal("> CLEARANCE LEVEL 4 RECOGNIZED."), 1500);
-                    setTimeout(() => logToTerminal("> ENCRYPTING CONNECTION..."), 3500);
+                    setTimeout(() => logToTerminal("> CLEARANCE LEVEL 4 RECOGNIZED."), 1200);
                 }, 1000);
             } else {
-                document.getElementById('sndDeny').play().catch(e => {});
+                document.getElementById('sndDeny').play().catch(e=>{});
                 input.classList.add('error-shake');
                 setTimeout(() => { input.classList.remove('error-shake'); input.value = ""; }, 500);
             }
         }
-        
-        /* --- 3. THE INSTANT-SYNC TYPEWRITER --- */
+
+        function openAccessModal(name, prefix, target) {
+            logToTerminal(`> REQUESTING ACCESS: ${name.toUpperCase()}...`);
+            currentPrefix = prefix; currentTargetPage = target;
+            document.getElementById('modal-title').innerText = name + " ACCESS";
+            document.getElementById('modal-prefix').innerText = prefix;
+            document.getElementById('deptCodeInput').value = "";
+            setTimeout(() => { document.getElementById('access-modal').style.display = 'flex'; document.getElementById('deptCodeInput').focus(); }, 1000);
+        }
+
+        function closeModal() { document.getElementById('access-modal').style.display = 'none'; logToTerminal("> REQUEST CANCELLED."); }
+
+        function validateDeptCode() {
+            const val = document.getElementById('deptCodeInput').value;
+            if (VALID_CODES[currentPrefix].includes(val)) {
+                document.getElementById('sndGrant').play().catch(e=>{});
+                logToTerminal(`> CLEARANCE VALIDATED: ${currentPrefix}${val}`);
+                setTimeout(() => { window.location.href = currentTargetPage; }, 1200);
+            } else {
+                document.getElementById('sndDeny').play().catch(e=>{});
+                document.querySelector('.modal-box').classList.add('error-shake');
+                logToTerminal(`> [!] SECURITY BREACH: INVALID KEY ${currentPrefix}${val}`);
+                setTimeout(() => { document.querySelector('.modal-box').classList.remove('error-shake'); }, 500);
+            }
+        }
+
+        /* --- 4. THE TYPEWRITER --- */
         function logToTerminal(msg) {
             const feed = document.getElementById('terminal-log');
             const line = document.createElement('div');
-            line.style.marginBottom = "5px";
-            feed.appendChild(line);
-            
-            let i = 0;
-            const typeSound = document.getElementById('sndType');
-            // Force the sound to be ready in the background
-            typeSound.preload = "auto"; 
-            typeSound.volume = 0.5;
+            line.style.marginBottom = "5px"; feed.appendChild(line);
+            let i = 0; const typeSound = document.getElementById('sndType');
 
             function typeChar() {
                 if (i < msg.length) {
-                    // 1. TRIGGER SOUND FIRST (to beat the lag)
-                    typeSound.currentTime = 0;
-                    typeSound.play().catch(e => {});
-
-                    // 2. ADD CHARACTER
-                    line.innerHTML += msg.charAt(i);
-                    i++;
-                    
-                    // 3. RECURSE
-                    // Typing speed is 40ms. If the sound is too laggy, 
-                    // increase this number slightly (e.g., 50 or 60)
-                    setTimeout(typeChar, 40); 
-                    feed.scrollTop = feed.scrollHeight;
+                    typeSound.currentTime = 0; typeSound.play().catch(e=>{});
+                    line.innerHTML += msg.charAt(i); i++;
+                    setTimeout(typeChar, 40); feed.scrollTop = feed.scrollHeight;
                 }
             }
             typeChar();
         }
 
-        /* --- 4. THE TERMINATE SEQUENCE --- */
+        /* --- 5. TERMINATE --- */
         async function terminateSession() {
-            // Play the heavy wipe sound first
-            document.getElementById('sndWipe').play().catch(e => {});
-            
-            const steps = [
-                "> [!] TERMINATION REQUESTED...",
-                "> SCRUBBING PERSONNEL DATA...",
-                "> PURGING SESSION KEYS...",
-                "> DISCONNECTED."
-            ];
-
-            // Loop through steps and wait for typing to finish before next line
-            for (let j = 0; j < steps.length; j++) {
-                logToTerminal(steps[j]);
-                // Wait 1 second between starting each line
-                await new Promise(r => setTimeout(r, 1000)); 
-            }
-
-            // Final Shutdown
-            setTimeout(() => {
-                document.getElementById('sndShutdown').play().catch(e => {});
-                setTimeout(() => {
-                    window.location.href = "index.html";
-                }, 2000);
-            }, 500);
+            document.getElementById('sndWipe').play().catch(e=>{});
+            const steps = ["> [!] INITIATING WIPE...", "> SCRUBBING DATA...", "> DISCONNECTED."];
+            for (let step of steps) { logToTerminal(step); await new Promise(r => setTimeout(r, 1000)); }
+            document.getElementById('sndShutdown').play().catch(e=>{});
+            setTimeout(() => { window.location.href = "index.html"; }, 1500);
         }
     </script>
 </body>
