@@ -367,10 +367,23 @@
 
         async function terminateSession() {
             document.getElementById('sndWipe').play().catch(e=>{});
-            const steps = ["> [!] INITIATING WIPE...", "> SCRUBBING DATA...", "> DISCONNECTED."];
-            for (let step of steps) { logToTerminal(step); await new Promise(r => setTimeout(r, 1000)); }
+    
+            const steps = [
+                "<span style='color:var(--primary-red);'>[!] INITIATING WIPE...</span>", 
+                "<span style='color:var(--primary-red);'>> SCRUBBING DATA...</span>", 
+                "<span style='color:var(--primary-red);'>> DISCONNECTED.</span>"
+            ];
+
+            for (let step of steps) { 
+                logToTerminal(step); 
+                await new Promise(r => setTimeout(r, 1000)); 
+            }
+
             document.getElementById('sndShutdown').play().catch(e=>{});
-            setTimeout(() => { window.location.href = "index.html"; }, 1500);
+    
+            setTimeout(() => { 
+                window.location.href = "../index.html"; 
+            }, 1500);
         }
     </script>
 </body>
