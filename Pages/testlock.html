@@ -280,7 +280,7 @@
             const password = input.value;
 
             try {
-                const response = await fetch("gps-wiki-ptms2ftla-globalpowersolutionsdevs-projects.vercel.app/api/check-password", {
+                const response = await fetch("https://gps-wiki.vercel.app/api/check-password", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ type: "login", password })
@@ -335,7 +335,7 @@
                 : raw;
 
             try {
-                const response = await fetch("gps-wiki-ptms2ftla-globalpowersolutionsdevs-projects.vercel.app/api/check-password", {
+                const response = await fetch("https://gps-wiki.vercel.app/api/check-password", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
