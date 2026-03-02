@@ -202,8 +202,8 @@
             <h3 id="modal-title" style="font-family:'Share Tech Mono'; color:var(--primary-red); letter-spacing:3px;">DEPT ACCESS</h3>
         
             <div class="masked-container" onclick="document.getElementById('deptCodeInput').focus()">
-                <div class="ghost-layer" id="ghostText">QA-XXX-XXX</div>
-                <div class="user-layer" id="userDisplay"></div>
+                <div class="display-wrapper" id="displayWrapper">
+                    </div>
                 <input type="text" class="hidden-input" id="deptCodeInput" maxlength="6" autocomplete="off" spellcheck="false">
             </div>
 
@@ -277,35 +277,32 @@
 
         /* --- MASKED INPUT SCRIPT --- */
         const realInput = document.getElementById('deptCodeInput');
-        const ghostText = document.getElementById('ghostText');
-        const userDisplay = document.getElementById('userDisplay');
+        const displayWrapper = document.getElementById('displayWrapper');
 
+        function renderMask(val = "") {
+            const template = currentActivePrefix + "-XXX-XXX";
+            // Construct what the typed version looks like
+            let userStr = currentActivePrefix + "-";
+            if(val.length > 0) {
+                userStr += (val.length > 3) ? val.substring(0,3) + "-" + val.substring(3) : val;
+            }
+        
+            let html = "";
+            for(let i=0; i < template.length; i++) {
+                // If there is a character at this position in our typed string, hide the ghost char
+                const isUserChar = userStr[i] && userStr[i] !== " " && i < userStr.length;
+                html += `
+                    <div class="char-slot">
+                        <span class="ghost-char" style="opacity: ${isUserChar ? 0 : 1}">${template[i]}</span>
+                        <span class="user-char">${isUserChar ? userStr[i] : ""}</span>
+                    </div>`;
+                }
+            displayWrapper.innerHTML = html;
+        }
+        
         realInput.addEventListener('input', () => {
-            let val = realInput.value.replace(/[^0-9]/g, '').substring(0, 6);
-            realInput.value = val;
-    
-            let redStr = "";
-            if (val.length > 0) {
-                redStr = currentActivePrefix + "-";
-                if (val.length <= 3) {
-                    redStr += val;
-                } else {
-                    redStr += val.substring(0, 3) + "-" + val.substring(3);
-                }
-            }
-            userDisplay.innerText = redStr;
-    
-            let template = currentActivePrefix + "-XXX-XXX";
-            let finalGhost = "";
-    
-            for (let i = 0; i < template.length; i++) {
-                if (redStr[i]) {
-                    finalGhost += " "; 
-                } else {
-                    finalGhost += template[i];
-                }
-            }
-            ghostText.innerText = finalGhost;
+            realInput.value = realInput.value.replace(/[^0-9]/g, '');
+            renderMask(realInput.value);
         });
 
         /* --- SYSTEM FUNCTIONS --- */
@@ -352,6 +349,7 @@
             currentActivePrefix = prefix;
             document.getElementById('modal-title').innerText = name + " ACCESS";
             realInput.value = "";
+            renderMask("")
             userDisplay.innerText = "";
             ghostText.innerText = prefix + "-XXX-XXX";
             setTimeout(() => { 
