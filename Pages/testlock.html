@@ -280,12 +280,10 @@
             const password = input.value;
 
             try {
-                const response = await fetch("/api/check-password", {
+                const response = await fetch("https://gps-wiki.vercel.app/api/check-password", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ password })
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ type: "login", password })
                 });
 
                 const data = await response.json();
@@ -337,12 +335,10 @@
                 : raw;
 
             try {
-                const response = await fetch("/api/check-password", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
+                const response = await fetch("https://gps-wiki.vercel.app/api/check-password", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
                         type: "dept",
                         prefix: currentActivePrefix,
                         code: formatted
