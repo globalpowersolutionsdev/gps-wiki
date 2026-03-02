@@ -330,18 +330,44 @@
 
         function closeModal() { document.getElementById('access-modal').style.display = 'none'; logToTerminal("> REQUEST CANCELLED."); }
 
-        function validateDeptCode() {
+        async function validateDeptCode() {
             const raw = realInput.value;
-            let formatted = raw.length > 3 ? raw.substring(0, 3) + "-" + raw.substring(3) : raw;
-            if (VALID_CODES[currentActivePrefix].includes(formatted)) {
-                document.getElementById('sndGrant').play().catch(e=>{});
-                logToTerminal(`> CLEARANCE VALIDATED: ${currentActivePrefix}-${formatted}`);
-                setTimeout(() => { window.location.href = currentActivePrefix.toLowerCase() + "_hub.html"; }, 1200);
-            } else {
-                document.getElementById('sndDeny').play().catch(e=>{});
-                document.querySelector('.modal-box').classList.add('error-shake');
-                logToTerminal(`> [!] ACCESS DENIED: ${currentPrefix}-${formatted}`);
-                setTimeout(() => { document.querySelector('.modal-box').classList.remove('error-shake'); }, 500);
+            let formatted = raw.length > 3
+                ? raw.substring(0, 3) + "-" + raw.substring(3)
+                : raw;
+
+            try {
+                const response = await fetch("/api/check-password", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        type: "dept",
+                        prefix: currentActivePrefix,
+                        code: formatted
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('sndGrant').play().catch(e=>{});
+                    logToTerminal(`> CLEARANCE VALIDATED: ${currentActivePrefix}-${formatted}`);
+                    setTimeout(() => {
+                        window.location.href = currentActivePrefix.toLowerCase() + "_hub.html";
+                    }, 1200);
+                } else {
+                   document.getElementById('sndDeny').play().catch(e=>{});
+                   document.querySelector('.modal-box').classList.add('error-shake');
+                   logToTerminal(`> [!] ACCESS DENIED`);
+                  setTimeout(() => {
+                        document.querySelector('.modal-box').classList.remove('error-shake');
+                    }, 500);
+                }
+
+            } catch (err) {
+                alert("System error.");
             }
         }
 
