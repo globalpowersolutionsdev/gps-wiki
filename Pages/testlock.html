@@ -275,29 +275,43 @@
         });
 
         /* --- SYSTEM FUNCTIONS --- */
-        function checkClearance() {
-    const input = document.getElementById('passInput');
-    const password = input.value;
+        async function checkClearance() {
+            const input = document.getElementById('passInput');
+            const password = input.value;
 
-    if (password === "test123") { // test password here
-        document.getElementById('sndGrant').play().catch(e => {});
-        document.getElementById('login-screen').classList.add('fade-out');
+            try {
+                const response = await fetch("gps-wiki-ptms2ftla-globalpowersolutionsdevs-projects.vercel.app/api/check-password", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ type: "login", password })
+                });
 
-        setTimeout(() => {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('secure-dashboard').style.display = 'block';
-            logToTerminal("> AUTHENTICATION SUCCESSFUL.");
-            setTimeout(() => logToTerminal("> CLEARANCE LEVEL 4 RECOGNIZED."), 1200);
-        }, 1000);
-    } else {
-        document.getElementById('sndDeny').play().catch(e => {});
-        input.classList.add('error-shake');
-        setTimeout(() => {
-            input.classList.remove('error-shake');
-            input.value = "";
-        }, 500);
-    }
-}
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('sndGrant').play().catch(e=>{});
+                    document.getElementById('login-screen').classList.add('fade-out');
+
+                    setTimeout(() => {
+                        document.getElementById('login-screen').style.display = 'none';
+                        document.getElementById('secure-dashboard').style.display = 'block';
+                        logToTerminal("> AUTHENTICATION SUCCESSFUL.");
+                        setTimeout(() => logToTerminal("> CLEARANCE LEVEL 4 RECOGNIZED."), 1200);
+                    }, 1000);
+
+                } else {
+                    document.getElementById('sndDeny').play().catch(e=>{});
+                    input.classList.add('error-shake');
+                    setTimeout(() => {
+                        input.classList.remove('error-shake');
+                        input.value = "";
+                    }, 500);
+                }
+
+            } catch (err) {
+                alert("System error. Try again.");
+             }
+        }
 
         function openAccessModal(name, prefix) {
             logToTerminal(`> REQUESTING ACCESS: ${name.toUpperCase()}...`);
