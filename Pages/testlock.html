@@ -113,29 +113,59 @@
         }
 
         .masked-container {
-            position: relative; background: #0a0a0a;
-            padding: 25px; margin: 25px 0;
+            position: relative;
+            background: #0a0a0a;
+            height: 80px;
+            margin: 25px auto;
+            width: 340px;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1.6rem; display: flex;
-            justify-content: center; letter-spacing: 5px;
-            border: 1px solid #1a1a1a; cursor: text;
+            font-size: 1.8rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #1a1a1a;
+            cursor: text;
+            overflow: hidden;
         }
 
         .ghost-layer {
-            position: absolute; color: #333; z-index: 1;
-            pointer-events: none; white-space: nowrap;
+            position: absolute;
+            color: #222;
+            z-index: 1;
+            pointer-events: none;
+            white-space: pre;
+            letter-spacing: 6px;
+            width: 100%;
+            text-align: center;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         .user-layer {
-            position: absolute; color: var(--primary-red); z-index: 2;
-            pointer-events: none; white-space: nowrap;
+            position: absolute;
+            color: var(--primary-red);
+            z-index: 2;
+            pointer-events: none;
+            white-space: pre;
+            letter-spacing: 6px;
+            width: 100%;
+            text-align: center;
             text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         .hidden-input {
-            position: absolute; z-index: 3; opacity: 0;
-            width: 100%; height: 100%; cursor: text;
-            border: none; outline: none; left: 0; top: 0;
+            position: absolute;
+            z-index: 3;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: text;
+            border: none;
+            outline: none;
+            left: 0;
+            top: 0;
         }
 
         .terminal-feed {
@@ -170,7 +200,7 @@
     <div id="access-modal">
         <div class="modal-box">
             <h3 id="modal-title" style="font-family:'Share Tech Mono'; color:var(--primary-red); letter-spacing:3px;">DEPT ACCESS</h3>
-            
+        
             <div class="masked-container" onclick="document.getElementById('deptCodeInput').focus()">
                 <div class="ghost-layer" id="ghostText">QA-XXX-XXX</div>
                 <div class="user-layer" id="userDisplay"></div>
@@ -217,11 +247,11 @@
         <a class="terminate-btn" onclick="terminateSession()">[ TERMINATE_SESSION_OVERRIDE ]</a>
     </main>
 
-    <audio id="sndDeny" src="denied.mp3"></audio>
-    <audio id="sndGrant" src="granted.mp3"></audio>
-    <audio id="sndType" src="terminal_type.mp3"></audio>
-    <audio id="sndWipe" src="wipe.mp3"></audio>
-    <audio id="sndShutdown" src="shutdown.mp3"></audio>
+    <audio id="sndDeny" src="sounds/denied.mp3"></audio>
+    <audio id="sndGrant" src="sounds/granted.mp3"></audio>
+    <audio id="sndType" src="sounds/terminal_type.mp3"></audio>
+    <audio id="sndWipe" src="sounds/wipe.mp3"></audio>
+    <audio id="sndShutdown" src="sounds/shutdown.mp3"></audio>
 
     <script>
         let currentActivePrefix = "";
@@ -251,25 +281,29 @@
         const userDisplay = document.getElementById('userDisplay');
 
         realInput.addEventListener('input', () => {
-            let val = realInput.value.replace(/[^0-9]/g, '');
+            let val = realInput.value.replace(/[^0-9]/g, '').substring(0, 6);
             realInput.value = val;
-
-            // Build Red User Text
-            let displayStr = currentActivePrefix + "-";
+    
+            let redStr = "";
             if (val.length > 0) {
-                if (val.length <= 3) displayStr += val;
-                else displayStr += val.substring(0, 3) + "-" + val.substring(3);
-            } else {
-                displayStr = ""; 
+                redStr = currentActivePrefix + "-";
+                if (val.length <= 3) {
+                    redStr += val;
+                } else {
+                    redStr += val.substring(0, 3) + "-" + val.substring(3);
+                }
             }
-            userDisplay.innerText = displayStr;
-
-            // Update Grey Ghost X's
-            let fullTemplate = currentActivePrefix + "-XXX-XXX";
+            userDisplay.innerText = redStr;
+    
+            let template = currentActivePrefix + "-XXX-XXX";
             let finalGhost = "";
-            for (let i = 0; i < fullTemplate.length; i++) {
-                if (displayStr[i]) finalGhost += "\u00A0"; 
-                else finalGhost += fullTemplate[i];
+    
+            for (let i = 0; i < template.length; i++) {
+                if (redStr[i]) {
+                    finalGhost += " "; 
+                } else {
+                    finalGhost += template[i];
+                }
             }
             ghostText.innerText = finalGhost;
         });
