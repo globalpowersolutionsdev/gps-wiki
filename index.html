@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GPS Official Wiki | Terminal</title>
@@ -69,7 +69,7 @@
             top: -10%; left: -10%;
             width: 120%; height: 120%;
             background: linear-gradient(rgba(10,10,10,0.75), rgba(10,10,10,0.95)), 
-                        url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1600');
+                        url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1600'); /* CHANGE SOON */
             background-size: cover;
             background-position: center;
             z-index: -1;
@@ -134,7 +134,7 @@
 
     <header class="hero">
         <div id="hero-bg"></div>
-        <h1>GPS Official Wiki</h1>
+        <h1>GPS Official Wiki</h1> 
         <div class="status-container">
             <div class="status-pill"><div class="dot online"></div> KHPP: ACTIVE</div>
             <div class="status-pill"><div class="dot online"></div> GRID: STABLE</div>
@@ -147,23 +147,23 @@
         </section>
 
         <section class="wiki-grid" id="wikiGrid">
-            <a href="khpphome.html" class="wiki-card" data-keywords="khpp klinton power plant hydroelectric">
+            <a href="Pages/KHPP/home.html" class="wiki-card" data-keywords="khpp klinton power plant hydroelectric">
                 <div class="card-img" style="background-image: url('https://via.placeholder.com/500x300/222/888?text=KHPP')"></div>
                 <div class="card-body"><h4>Klinton Hydroelectric Power Plant</h4></div>
             </a>
-            <a href="testlock.html" class="wiki-card" data-keywords="gpsosi">
+            <a href="Pages/testlock.html" class="wiki-card" data-keywords="gpsosi">
                 <div class="card-img" style="background-image: url('https://via.placeholder.com/500x300/222/888?text=RANKS')"></div>
                 <div class="card-body"><h4>GPSOSI</h4></div>
             </a>
         </section>
     </main>
 
-    <audio id="sndPower" src="power_on.mp3" preload="auto"></audio>
-    <audio id="sndHum" src="system_hum.mp3" preload="auto" loop></audio>
-    <audio id="sndBeep" src="bios_beep.mp3" preload="auto"></audio>
-    <audio id="sndReady" src="ready.mp3" preload="auto"></audio>
-    <audio id="sndHover" src="hover.mp3" preload="auto"></audio>
-    <audio id="sndClick" src="click.mp3" preload="auto"></audio>
+    <audio id="sndPower" src="sounds/power_on.mp3" preload="auto"></audio>
+    <audio id="sndHum" src="sounds/system_hum.mp3" preload="auto" loop></audio>
+    <audio id="sndBeep" src="sounds/bios_beep.mp3" preload="auto"></audio>
+    <audio id="sndReady" src="sounds/ready.mp3" preload="auto"></audio>
+    <audio id="sndHover" src="sounds/hover.mp3" preload="auto"></audio>
+    <audio id="sndClick" src="sounds/click.mp3" preload="auto"></audio>
 
     <script>
         /* 1. DYNAMIC LIGHTING LOGIC */
