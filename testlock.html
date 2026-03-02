@@ -284,22 +284,44 @@
         });
 
         /* --- SYSTEM FUNCTIONS --- */
-        function checkClearance() {
+        async function checkClearance() {
             const input = document.getElementById('passInput');
-            if (input.value.toUpperCase() === "GPS2026") {
-                document.getElementById('sndGrant').play().catch(e=>{});
-                document.getElementById('login-screen').classList.add('fade-out');
-                setTimeout(() => {
-                    document.getElementById('login-screen').style.display = 'none';
-                    document.getElementById('secure-dashboard').style.display = 'block';
-                    logToTerminal("> AUTHENTICATION SUCCESSFUL.");
-                    setTimeout(() => logToTerminal("> CLEARANCE LEVEL 4 RECOGNIZED."), 1200);
-                }, 1000);
-            } else {
-                document.getElementById('sndDeny').play().catch(e=>{});
-                input.classList.add('error-shake');
-                setTimeout(() => { input.classList.remove('error-shake'); input.value = ""; }, 500);
-            }
+            const password = input.value;
+
+            try {
+                const response = await fetch("/api/check-password", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('sndGrant').play().catch(e=>{});
+                    document.getElementById('login-screen').classList.add('fade-out');
+
+                    setTimeout(() => {
+                        document.getElementById('login-screen').style.display = 'none';
+                        document.getElementById('secure-dashboard').style.display = 'block';
+                        logToTerminal("> AUTHENTICATION SUCCESSFUL.");
+                        setTimeout(() => logToTerminal("> CLEARANCE LEVEL 4 RECOGNIZED."), 1200);
+                    }, 1000);
+
+                } else {
+                    document.getElementById('sndDeny').play().catch(e=>{});
+                    input.classList.add('error-shake');
+                    setTimeout(() => {
+                        input.classList.remove('error-shake');
+                        input.value = "";
+                    }, 500);
+                }
+
+            } catch (err) {
+                alert("System error. Try again.");
+             }
         }
 
         function openAccessModal(name, prefix) {
