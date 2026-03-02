@@ -113,59 +113,29 @@
         }
 
         .masked-container {
-            position: relative;
-            background: #0a0a0a;
-            height: 80px;
-            margin: 25px auto;
-            width: 340px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 1.8rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid #1a1a1a;
-            cursor: text;
-            overflow: hidden;
+            position: relative; background: #0a0a0a;
+            height: 80px; margin: 25px auto; width: 340px;
+            font-family: 'Share Tech Mono', monospace; font-size: 1.8rem;
+            display: flex; justify-content: center; align-items: center;
+            border: 1px solid #1a1a1a; cursor: text; overflow: hidden;
         }
 
-        .ghost-layer {
-            position: absolute;
-            color: #222;
-            z-index: 1;
-            pointer-events: none;
-            white-space: pre;
-            letter-spacing: 6px;
-            width: 100%;
-            text-align: center;
-            top: 50%;
-            transform: translateY(-50%);
-        }
+        .display-wrapper { position: relative; display: flex; pointer-events: none; }
+        .char-slot { position: relative; width: 0.75em; text-align: center; }
+        .ghost-char { color: #222; position: absolute; left: 0; top: 0; transition: opacity 0.2s; }
+        .user-char { color: var(--primary-red); position: absolute; left: 0; top: 0; text-shadow: 0 0 8px var(--primary-red); }
 
-        .user-layer {
-            position: absolute;
-            color: var(--primary-red);
-            z-index: 2;
-            pointer-events: none;
-            white-space: pre;
-            letter-spacing: 6px;
-            width: 100%;
-            text-align: center;
-            text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
-            top: 50%;
-            transform: translateY(-50%);
+        .cursor {
+            width: 2px; height: 1.1em; background: var(--primary-red);
+            display: inline-block; animation: blink 1s infinite;
+            margin-left: 4px; vertical-align: middle;
         }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
         .hidden-input {
-            position: absolute;
-            z-index: 3;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: text;
-            border: none;
-            outline: none;
-            left: 0;
-            top: 0;
+            position: absolute; z-index: 3; opacity: 0;
+            width: 100%; height: 100%; cursor: text;
+            border: none; outline: none; left: 0; top: 0;
         }
 
         .terminal-feed {
@@ -200,10 +170,9 @@
     <div id="access-modal">
         <div class="modal-box">
             <h3 id="modal-title" style="font-family:'Share Tech Mono'; color:var(--primary-red); letter-spacing:3px;">DEPT ACCESS</h3>
-        
+            
             <div class="masked-container" onclick="document.getElementById('deptCodeInput').focus()">
-                <div class="display-wrapper" id="displayWrapper">
-                    </div>
+                <div class="display-wrapper" id="displayWrapper"></div>
                 <input type="text" class="hidden-input" id="deptCodeInput" maxlength="6" autocomplete="off" spellcheck="false">
             </div>
 
@@ -255,6 +224,8 @@
 
     <script>
         let currentActivePrefix = "";
+        const realInput = document.getElementById('deptCodeInput');
+        const displayWrapper = document.getElementById('displayWrapper');
 
         /* --- MATRIX EFFECT --- */
         const canvas = document.getElementById('matrix-canvas');
@@ -275,31 +246,27 @@
         }
         setInterval(drawMatrix, 50);
 
-        /* --- MASKED INPUT SCRIPT --- */
-        const realInput = document.getElementById('deptCodeInput');
-        const displayWrapper = document.getElementById('displayWrapper');
-
+        /* --- SLOT-BASED MASKED INPUT --- */
         function renderMask(val = "") {
             const template = currentActivePrefix + "-XXX-XXX";
-            // Construct what the typed version looks like
             let userStr = currentActivePrefix + "-";
             if(val.length > 0) {
                 userStr += (val.length > 3) ? val.substring(0,3) + "-" + val.substring(3) : val;
             }
-        
+
             let html = "";
             for(let i=0; i < template.length; i++) {
-                // If there is a character at this position in our typed string, hide the ghost char
                 const isUserChar = userStr[i] && userStr[i] !== " " && i < userStr.length;
                 html += `
                     <div class="char-slot">
                         <span class="ghost-char" style="opacity: ${isUserChar ? 0 : 1}">${template[i]}</span>
                         <span class="user-char">${isUserChar ? userStr[i] : ""}</span>
                     </div>`;
-                }
+            }
+            html += `<div class="cursor"></div>`;
             displayWrapper.innerHTML = html;
         }
-        
+
         realInput.addEventListener('input', () => {
             realInput.value = realInput.value.replace(/[^0-9]/g, '');
             renderMask(realInput.value);
@@ -308,75 +275,64 @@
         /* --- SYSTEM FUNCTIONS --- */
         async function checkClearance() {
             const input = document.getElementById('passInput');
-            const password = input.value;
-
             try {
                 const response = await fetch("https://gps-wiki.vercel.app/api/check-password", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ type: "login", password })
+                    body: JSON.stringify({ type: "login", password: input.value })
                 });
-
                 const data = await response.json();
 
                 if (data.success) {
                     document.getElementById('sndGrant').play().catch(e=>{});
                     document.getElementById('login-screen').classList.add('fade-out');
-
                     setTimeout(() => {
                         document.getElementById('login-screen').style.display = 'none';
                         document.getElementById('secure-dashboard').style.display = 'block';
                         logToTerminal("> AUTHENTICATION SUCCESSFUL.");
                         setTimeout(() => logToTerminal("> CLEARANCE LEVEL 4 RECOGNIZED."), 1200);
                     }, 1000);
-
                 } else {
                     document.getElementById('sndDeny').play().catch(e=>{});
                     input.classList.add('error-shake');
-                    setTimeout(() => {
-                        input.classList.remove('error-shake');
-                        input.value = "";
-                    }, 500);
+                    setTimeout(() => { input.classList.remove('error-shake'); input.value = ""; }, 500);
                 }
-
-            } catch (err) {
-                alert("System error. Try again.");
-             }
+            } catch (err) { alert("System error. Try again."); }
         }
 
         function openAccessModal(name, prefix) {
             logToTerminal(`> REQUESTING ACCESS: ${name.toUpperCase()}...`);
             currentActivePrefix = prefix;
             document.getElementById('modal-title').innerText = name + " ACCESS";
+            
             realInput.value = "";
-            renderMask("")
-            userDisplay.innerText = "";
-            ghostText.innerText = prefix + "-XXX-XXX";
+            renderMask(""); // NEW: This handles the visuals correctly now
+            
             setTimeout(() => { 
                 document.getElementById('access-modal').style.display = 'flex'; 
                 realInput.focus(); 
             }, 1000);
         }
 
-        function closeModal() { document.getElementById('access-modal').style.display = 'none'; logToTerminal("> REQUEST CANCELLED."); }
+        function closeModal() {
+            document.getElementById('access-modal').style.display = 'none';
+            logToTerminal("> REQUEST CANCELLED.");
+        }
 
         async function validateDeptCode() {
             const raw = realInput.value;
-            let formatted = raw.length > 3
-                ? raw.substring(0, 3) + "-" + raw.substring(3)
-                : raw;
+            let formatted = raw.length > 3 ? raw.substring(0, 3) + "-" + raw.substring(3) : raw;
 
             try {
                 const response = await fetch("https://gps-wiki.vercel.app/api/check-password", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
                         type: "dept",
                         prefix: currentActivePrefix,
                         code: formatted
                     })
                 });
-
                 const data = await response.json();
 
                 if (data.success) {
@@ -386,17 +342,12 @@
                         window.location.href = currentActivePrefix.toLowerCase() + "_hub.html";
                     }, 1200);
                 } else {
-                   document.getElementById('sndDeny').play().catch(e=>{});
-                   document.querySelector('.modal-box').classList.add('error-shake');
-                   logToTerminal(`> [!] ACCESS DENIED`);
-                  setTimeout(() => {
-                        document.querySelector('.modal-box').classList.remove('error-shake');
-                    }, 500);
+                    document.getElementById('sndDeny').play().catch(e=>{});
+                    document.querySelector('.modal-box').classList.add('error-shake');
+                    logToTerminal(`> [!] ACCESS DENIED`);
+                    setTimeout(() => { document.querySelector('.modal-box').classList.remove('error-shake'); }, 500);
                 }
-
-            } catch (err) {
-                alert("System error.");
-            }
+            } catch (err) { alert("System error."); }
         }
 
         function logToTerminal(msg) {
