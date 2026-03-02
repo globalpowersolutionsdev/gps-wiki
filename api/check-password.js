@@ -15,11 +15,9 @@ export default function handler(req, res) {
 
   // Main Login Check
   if (type === "login") {
-    if (password === process.env.ADMIN_PASSWORD) {
-      return res.status(200).json({ success: true });
-    }
-    return res.status(401).json({ success: false });
-  }
+  if (password === "test123") return res.status(200).json({ success: true });
+  return res.status(401).json({ success: false });
+}
 
   // Department Code Check
   if (type === "dept") {
